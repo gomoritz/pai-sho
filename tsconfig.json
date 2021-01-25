@@ -14,5 +14,6 @@
         "tsBuildInfoFile": "buildcache/tsbuildinfo.json",
         "outDir": "build/"
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "compileOnSave": true
 }
