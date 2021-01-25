@@ -1,2 +1,5 @@
 .idea/
 pai-sho.iml
+
+build/
+*.js

@@ -11,9 +11,7 @@
         "declaration": false,
         "listEmittedFiles": true,
         "incremental": true,
-        "tsBuildInfoFile": "buildcache/tsbuildinfo.json",
-        "outDir": "build/"
+        "tsBuildInfoFile": "buildcache/tsbuildinfo.json"
     },
-    "include": ["src/**/*"],
-    "compileOnSave": true
+    "include": ["src/**/*"]
 }
