@@ -1,5 +1,5 @@
 import RenderObject from "./render-object.js";
-import { canvas, ctx } from "../game.js";
+import { canvas, ctx, isDebug } from "../game.js";
 import { brown, red, white } from "../utils/colors.js";
 import { drawTriangle } from "../shapes/triangle.js";
 
@@ -26,13 +26,13 @@ export default class GameBoard implements RenderObject {
     }
 
     clipGameBoardCircle() {
+        ctx.save()
         ctx.arc(this.center.x, this.center.y, gameBoardRadius, 0, Math.PI * 2)
         ctx.clip()
     }
 
     resetClip() {
-        ctx.rect(0, 0, canvas.width, canvas.height)
-        ctx.clip()
+        ctx.restore()
     }
 
     fillBackground() {
@@ -90,22 +90,74 @@ export default class GameBoard implements RenderObject {
             red)
     }
 
+    /**
+     * Draws the grid over the game board.
+     *
+     * If the developer mode is enabled, the circle game board clip is disabled during
+     * the drawing process and the coordinates outside of the circle are visible.
+     *
+     * The blue (falling) lines represent the x-coordinates while the green (rising) lines
+     * represent the y-coordinates.
+     */
     drawGrid() {
-        ctx.strokeStyle = "#000"
-        ctx.lineWidth = 4
-
-        for (let lineOffsetX = -gameBoardRadius * 2 + innerHeight / 7 + 10; lineOffsetX <= gameBoardRadius * 2; lineOffsetX += innerHeight * 2 / 7) {
-            ctx.beginPath()
-            ctx.moveTo(this.center.x - gameBoardRadius + lineOffsetX, this.center.y - gameBoardRadius)
-            ctx.lineTo(this.center.x + gameBoardRadius, this.center.y + gameBoardRadius - lineOffsetX)
-            ctx.stroke()
+        if (isDebug) {
+            this.resetClip()
+            ctx.strokeStyle = "#0062FF"
+            ctx.fillStyle = "#0062FF"
+            ctx.font = "20px monospace"
+            ctx.lineWidth = 3
+        } else {
+            ctx.strokeStyle = "#000"
+            ctx.lineWidth = 4
         }
 
-        for (let lineOffsetX = -gameBoardRadius * 2 + innerHeight / 7 + 10; lineOffsetX <= gameBoardRadius * 2; lineOffsetX += innerHeight * 2 / 7) {
+        const lineGap = innerHeight * 2 / 7
+
+        for (let i = 0; i < 9; i++) {
+            const lineOffset = i * lineGap
+
             ctx.beginPath()
-            ctx.moveTo(this.center.x + gameBoardRadius - lineOffsetX, this.center.y - gameBoardRadius)
-            ctx.lineTo(this.center.x - gameBoardRadius, this.center.y + gameBoardRadius - lineOffsetX)
+            ctx.moveTo(this.center.x - gameBoardRadius + lineOffset, this.center.y - gameBoardRadius)
+            ctx.lineTo(this.center.x + gameBoardRadius, this.center.y + gameBoardRadius - lineOffset)
             ctx.stroke()
+
+            ctx.fillText("x=" + i, this.center.x + gameBoardRadius + 5, this.center.y + gameBoardRadius - lineOffset + 10)
+
+            if (i == 0) continue
+
+            ctx.beginPath()
+            ctx.moveTo(this.center.x - gameBoardRadius, this.center.y - gameBoardRadius + lineOffset)
+            ctx.lineTo(this.center.x + gameBoardRadius - lineOffset, this.center.y + gameBoardRadius)
+            ctx.stroke()
+
+            ctx.fillText("x=" + -i, this.center.x - gameBoardRadius - 55, this.center.y - gameBoardRadius + lineOffset + 5)
         }
+
+        if (isDebug) {
+            ctx.strokeStyle = "#27C800"
+            ctx.fillStyle = "#27C800"
+        }
+
+        for (let i = 0; i < 9; i++) {
+            const lineOffset = i * lineGap
+
+            ctx.beginPath()
+            ctx.moveTo(this.center.x + gameBoardRadius - lineOffset, this.center.y - gameBoardRadius)
+            ctx.lineTo(this.center.x - gameBoardRadius, this.center.y + gameBoardRadius - lineOffset)
+            ctx.stroke()
+
+            ctx.fillText("y=" + i, this.center.x + gameBoardRadius - lineOffset - 15, this.center.y - gameBoardRadius - 10)
+
+            if (i == 0) continue
+
+            ctx.beginPath()
+            ctx.moveTo(this.center.x + gameBoardRadius, this.center.y - gameBoardRadius + lineOffset)
+            ctx.lineTo(this.center.x - gameBoardRadius + lineOffset, this.center.y + gameBoardRadius)
+            ctx.stroke()
+
+            ctx.fillText("y=" + -i, this.center.x - gameBoardRadius + lineOffset - 25, this.center.y + gameBoardRadius + 23)
+        }
+
+        if (isDebug) this.clipGameBoardCircle()
     }
 }
