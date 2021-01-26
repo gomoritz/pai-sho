@@ -1,3 +1,3 @@
-export const white = "#FFFFFF"
-export const red = "#7F0000"
-export const brown = "#6B2A00"
+export const white = "#e9cc9d"
+export const red = "#6f2801"
+export const brown = "#daa962"
