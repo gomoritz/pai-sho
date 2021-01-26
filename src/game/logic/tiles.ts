@@ -3,6 +3,7 @@ import { ctx } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
 import { add } from "../shapes/point.js";
 import Field from "./field.js";
+import { gameBoard } from "../logic-core.js";
 
 export abstract class Tile implements RenderObject {
     public isDark: boolean
@@ -16,12 +17,25 @@ export abstract class Tile implements RenderObject {
         const center = gameBoardRenderer.center
         const id = this.isDark ? this.imageResource + "__dark" : this.imageResource
         const image = document.getElementById(id) as HTMLImageElement
-        const size = 44
+        const size = 42
         const { x, y } = add(center, this.field.translateToPoint()!!)
+        const cornerX = x - size / 2
+        const cornerY = y - size / 2
+
+        ctx.fillStyle = "rgba(0,0,0,.7)"
+        ctx.beginPath()
+        ctx.arc(x + 1, y + 2, size / 2, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.closePath()
 
         ctx.imageSmoothingEnabled = true
         ctx.imageSmoothingQuality = "high"
-        ctx.drawImage(image, x - size / 2, y - size / 2, size, size)
+        ctx.drawImage(image, cornerX, cornerY, size, size)
+    }
+
+    atField(x: number, y: number): this {
+        this.field = gameBoard.getField(x,  y)
+        return this
     }
 }
 
