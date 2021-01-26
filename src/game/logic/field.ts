@@ -3,7 +3,6 @@ import { ctx } from "../game.js";
 import { gameBoard } from "../render-core.js";
 import { Direction } from "./direction.js";
 
-let distance = 1;
 export default class Field {
     constructor(public x: number, public y: number) {
     }
