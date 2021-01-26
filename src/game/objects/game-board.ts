@@ -2,12 +2,10 @@ import RenderObject from "./render-object.js";
 import { canvas, ctx, isDebug } from "../game.js";
 import { brown, red, white } from "../utils/colors.js";
 import { drawTriangle } from "../shapes/triangle.js";
-
-const gameBoardRadius = 380
-const innerHeight = 210
+import { innerTrianglesHeight, gameBoardRadius, lineGap } from "../utils/dimensions.js";
 
 export default class GameBoard implements RenderObject {
-    private center: Point
+    public center: Point
 
     render() {
         this.center = {
@@ -45,23 +43,23 @@ export default class GameBoard implements RenderObject {
 
         drawTriangle(
             this.center,
-            { x: x - innerHeight, y: y + innerHeight },
-            { x: x + innerHeight, y: y + innerHeight },
+            { x: x - innerTrianglesHeight, y: y + innerTrianglesHeight },
+            { x: x + innerTrianglesHeight, y: y + innerTrianglesHeight },
             red)
         drawTriangle(
             this.center,
-            { x: x - innerHeight, y: y - innerHeight },
-            { x: x + innerHeight, y: y - innerHeight },
+            { x: x - innerTrianglesHeight, y: y - innerTrianglesHeight },
+            { x: x + innerTrianglesHeight, y: y - innerTrianglesHeight },
             red)
         drawTriangle(
             this.center,
-            { x: x + innerHeight, y: y - innerHeight },
-            { x: x + innerHeight, y: y + innerHeight },
+            { x: x + innerTrianglesHeight, y: y - innerTrianglesHeight },
+            { x: x + innerTrianglesHeight, y: y + innerTrianglesHeight },
             white)
         drawTriangle(
             this.center,
-            { x: x - innerHeight, y: y - innerHeight },
-            { x: x - innerHeight, y: y + innerHeight },
+            { x: x - innerTrianglesHeight, y: y - innerTrianglesHeight },
+            { x: x - innerTrianglesHeight, y: y + innerTrianglesHeight },
             white)
     }
 
@@ -69,24 +67,24 @@ export default class GameBoard implements RenderObject {
         const { y, x } = this.center;
 
         drawTriangle(
-            { x: x + innerHeight, y: y + innerHeight },
-            { x: x + innerHeight, y: y + innerHeight * 2 },
-            { x: x + innerHeight * 2, y: y + innerHeight },
+            { x: x + innerTrianglesHeight, y: y + innerTrianglesHeight },
+            { x: x + innerTrianglesHeight, y: y + innerTrianglesHeight * 2 },
+            { x: x + innerTrianglesHeight * 2, y: y + innerTrianglesHeight },
             red)
         drawTriangle(
-            { x: x - innerHeight, y: y + innerHeight },
-            { x: x - innerHeight, y: y + innerHeight * 2 },
-            { x: x - innerHeight * 2, y: y + innerHeight },
+            { x: x - innerTrianglesHeight, y: y + innerTrianglesHeight },
+            { x: x - innerTrianglesHeight, y: y + innerTrianglesHeight * 2 },
+            { x: x - innerTrianglesHeight * 2, y: y + innerTrianglesHeight },
             red)
         drawTriangle(
-            { x: x + innerHeight, y: y - innerHeight },
-            { x: x + innerHeight, y: y - innerHeight * 2 },
-            { x: x + innerHeight * 2, y: y - innerHeight },
+            { x: x + innerTrianglesHeight, y: y - innerTrianglesHeight },
+            { x: x + innerTrianglesHeight, y: y - innerTrianglesHeight * 2 },
+            { x: x + innerTrianglesHeight * 2, y: y - innerTrianglesHeight },
             red)
         drawTriangle(
-            { x: x - innerHeight, y: y - innerHeight },
-            { x: x - innerHeight, y: y - innerHeight * 2},
-            { x: x - innerHeight * 2, y: y - innerHeight },
+            { x: x - innerTrianglesHeight, y: y - innerTrianglesHeight },
+            { x: x - innerTrianglesHeight, y: y - innerTrianglesHeight * 2},
+            { x: x - innerTrianglesHeight * 2, y: y - innerTrianglesHeight },
             red)
     }
 
@@ -108,10 +106,8 @@ export default class GameBoard implements RenderObject {
             ctx.lineWidth = 3
         } else {
             ctx.strokeStyle = "#000"
-            ctx.lineWidth = 5
+            ctx.lineWidth = 3
         }
-
-        const lineGap = innerHeight * 2 / 7
 
         for (let i = 0; i < 9; i++) {
             const lineOffset = i * lineGap
