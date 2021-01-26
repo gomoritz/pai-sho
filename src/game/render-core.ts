@@ -7,19 +7,14 @@ export function renderCanvas() {
         y: canvas.height / 2
     }
 
-    const circleRadius = 380
-    const gameBoardSize = 410
+    const gameBoardRadius = 380
     const innerHeight = 210
 
     const white = "#FFF"
     const red = "#7F0000"
     const brown = "#6B2A00"
-    const gameBoardBackground = "#000000"
 
-    ctx.fillStyle = gameBoardBackground
-    ctx.fillRect(center.x - gameBoardSize, center.y - gameBoardSize, gameBoardSize * 2, gameBoardSize * 2)
-
-    ctx.arc(center.x, center.y, circleRadius, 0, Math.PI * 2)
+    ctx.arc(center.x, center.y, gameBoardRadius, 0, Math.PI * 2)
     ctx.clip()
 
     ctx.fillStyle = brown
@@ -77,17 +72,17 @@ export function renderCanvas() {
     ctx.strokeStyle = "#000"
     ctx.lineWidth = 4
 
-    for (let lineOffsetX = -gameBoardSize * 2 + innerHeight / 7 + 10; lineOffsetX <= gameBoardSize * 2; lineOffsetX += innerHeight * 2 / 7) {
+    for (let lineOffsetX = -gameBoardRadius * 2 + innerHeight / 7 + 10; lineOffsetX <= gameBoardRadius * 2; lineOffsetX += innerHeight * 2 / 7) {
         ctx.beginPath()
-        ctx.moveTo(center.x - gameBoardSize + lineOffsetX, center.y - gameBoardSize)
-        ctx.lineTo(center.x + gameBoardSize, center.y + gameBoardSize - lineOffsetX)
+        ctx.moveTo(center.x - gameBoardRadius + lineOffsetX, center.y - gameBoardRadius)
+        ctx.lineTo(center.x + gameBoardRadius, center.y + gameBoardRadius - lineOffsetX)
         ctx.stroke()
     }
 
-    for (let lineOffsetX = -gameBoardSize * 2 + innerHeight / 7 + 10; lineOffsetX <= gameBoardSize * 2; lineOffsetX += innerHeight * 2 / 7) {
+    for (let lineOffsetX = -gameBoardRadius * 2 + innerHeight / 7 + 10; lineOffsetX <= gameBoardRadius * 2; lineOffsetX += innerHeight * 2 / 7) {
         ctx.beginPath()
-        ctx.moveTo(center.x + gameBoardSize - lineOffsetX, center.y - gameBoardSize)
-        ctx.lineTo(center.x - gameBoardSize, center.y + gameBoardSize - lineOffsetX)
+        ctx.moveTo(center.x + gameBoardRadius - lineOffsetX, center.y - gameBoardRadius)
+        ctx.lineTo(center.x - gameBoardRadius, center.y + gameBoardRadius - lineOffsetX)
         ctx.stroke()
     }
 

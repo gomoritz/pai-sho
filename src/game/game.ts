@@ -8,7 +8,7 @@ setCanvasDimensions()
 draw()
 
 function draw() {
-    ctx.fillStyle = "rgb(30, 30, 30)"
+    ctx.fillStyle = "rgb(0, 0, 0)"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     renderCanvas()
