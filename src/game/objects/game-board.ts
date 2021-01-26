@@ -108,7 +108,7 @@ export default class GameBoard implements RenderObject {
             ctx.lineWidth = 3
         } else {
             ctx.strokeStyle = "#000"
-            ctx.lineWidth = 4
+            ctx.lineWidth = 5
         }
 
         const lineGap = innerHeight * 2 / 7
