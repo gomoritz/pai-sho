@@ -2,7 +2,7 @@ import { gameBoard } from "../logic-core.js";
 import { ctx } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
 import { Direction } from "./direction.js";
-import { Point } from "../shapes/point.js";
+import Point from "../shapes/point.js";
 
 export default class Field {
     constructor(public x: number, public y: number) {

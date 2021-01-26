@@ -1,6 +1,6 @@
 import { gameBoardRadius, lineGap } from "../utils/dimensions.js";
 import Field from "./field.js";
-import { Point } from "../shapes/point.js";
+import Point from "../shapes/point.js";
 
 export default class GameBoard {
     public fields: { [coordinate: string]: Field }
