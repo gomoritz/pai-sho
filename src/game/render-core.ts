@@ -1,9 +1,9 @@
-import GameBoard from "./objects/game-board.js";
+import GameBoardRender from "./objects/game-board-render.js";
 import RenderObject from "./objects/render-object.js";
 
-export const gameBoard = new GameBoard()
+export const gameBoardRenderer = new GameBoardRender()
 
-const renderObjects: RenderObject[] = [gameBoard]
+const renderObjects: RenderObject[] = [gameBoardRenderer]
 
 export function renderCanvas() {
     renderObjects.forEach(obj => obj.render())

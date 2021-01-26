@@ -1,8 +1,8 @@
-import GameGrid from "./logic/game-grid.js";
+import GameBoard from "./logic/game-board.js";
 
-export const gameGrid = new GameGrid()
+export const gameBoard = new GameBoard()
 
 export function initLogic() {
     console.log("[Logic] Pai Sho game logic initialized")
-    gameGrid.loadFields()
+    gameBoard.loadFields()
 }

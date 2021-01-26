@@ -1,7 +1,8 @@
 import { gameBoardRadius, lineGap } from "../utils/dimensions.js";
 import Field from "./field.js";
+import { Point } from "../shapes/point.js";
 
-export default class GameGrid {
+export default class GameBoard {
     public fields: { [coordinate: string]: Field }
 
     getRealCoordinatesRelativeToCenter(fieldX: number, fieldY: number): Point | null {

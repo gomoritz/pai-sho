@@ -3,8 +3,9 @@ import { canvas, ctx, isDebug } from "../game.js";
 import { brown, red, white } from "../utils/colors.js";
 import { drawTriangle } from "../shapes/triangle.js";
 import { innerTrianglesHeight, gameBoardRadius, lineGap } from "../utils/dimensions.js";
+import { Point } from "../shapes/point.js";
 
-export default class GameBoard implements RenderObject {
+export default class GameBoardRender implements RenderObject {
     public center: Point
 
     render() {
