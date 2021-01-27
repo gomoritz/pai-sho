@@ -1,6 +1,6 @@
 import { gameBoardRadius, lineGap } from "../utils/dimensions.js";
 import Field from "./field.js";
-import Point from "../shapes/point.js";
+import Point, { distanceBetween } from "../shapes/point.js";
 
 export default class GameBoard {
     public fields: { [coordinate: string]: Field }
@@ -35,5 +35,20 @@ export default class GameBoard {
 
     getField(fieldX: number, fieldY: number): Field | null {
         return this.fields[`${fieldX};${fieldY}`] ?? null
+    }
+
+    /**
+     * Returns the closest field to the given point which must be relative to the
+     * game board center or null if there is no field which is closer than 20 pixels
+     * away from the point.
+     */
+    getClosestField(point: Point): Field | null {
+        const closest = Object.values(this.fields).find(field => {
+            const position = field.translateToPoint()!!
+            const distance = distanceBetween(point, position)
+            return distance < 20
+        })
+
+        return closest ?? null
     }
 }
