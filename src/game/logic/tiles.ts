@@ -66,28 +66,54 @@ export abstract class Tile extends RenderObject {
         this.field = gameBoard.getField(x,  y)
         return this
     }
+
+    abstract canThrow(other: Tile): boolean
 }
 
 export class LotusTile extends Tile {
     imageResource: string = "lotus";
+
+    canThrow(other: Tile): boolean {
+        return false;
+    }
 }
 
 export class AvatarTile extends Tile {
     imageResource: string = "avatar"
+
+    canThrow(other: Tile): boolean {
+        return true;
+    }
 }
 
 export class AirTile extends Tile {
     imageResource: string = "air"
+
+    canThrow(other: Tile): boolean {
+        return other instanceof WaterTile;
+    }
 }
 
 export class EarthTile extends Tile {
     imageResource: string = "earth"
+
+    canThrow(other: Tile): boolean {
+        return other instanceof FireTile;
+    }
 }
 
 export class FireTile extends Tile {
     imageResource: string = "fire"
+
+    canThrow(other: Tile): boolean {
+        return other instanceof AirTile;
+    }
 }
 
 export class WaterTile extends Tile {
     imageResource: string = "water"
+
+    canThrow(other: Tile): boolean {
+        return other instanceof EarthTile;
+    }
 }
