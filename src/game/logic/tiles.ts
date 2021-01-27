@@ -1,13 +1,18 @@
 import RenderObject from "../objects/render-object.js";
 import { ctx } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
-import { add } from "../shapes/point.js";
+import Point, { add, subtract } from "../shapes/point.js";
 import Field from "./field.js";
 import { gameBoard } from "../logic-core.js";
+
+const size = 42
 
 export abstract class Tile implements RenderObject {
     public isDark: boolean
     public field: Field | null = null
+
+    public isBeingDragged: boolean = false
+    public dragPosition: Point | null = null
 
     protected abstract imageResource: string
 
@@ -17,8 +22,13 @@ export abstract class Tile implements RenderObject {
         const center = gameBoardRenderer.center
         const id = this.isDark ? this.imageResource + "__dark" : this.imageResource
         const image = document.getElementById(id) as HTMLImageElement
-        const size = 42
-        const { x, y } = add(center, this.field.translateToPoint()!!)
+        let { x, y } = add(center, this.field.translateToPoint()!!)
+
+        if (this.isBeingDragged && this.dragPosition != null) {
+            x = this.dragPosition.x
+            y = this.dragPosition.y
+        }
+
         const cornerX = x - size / 2
         const cornerY = y - size / 2
 
@@ -31,6 +41,14 @@ export abstract class Tile implements RenderObject {
         ctx.imageSmoothingEnabled = true
         ctx.imageSmoothingQuality = "high"
         ctx.drawImage(image, cornerX, cornerY, size, size)
+    }
+
+    isInsideTile(point: Point) {
+        const myPosition = this.field?.translateToPoint()!!
+        const relativePoint = subtract(point, myPosition)
+
+        const diagonal = Math.sqrt(Math.pow(relativePoint.x, 2) + Math.pow(relativePoint.y, 2))
+        return diagonal <= size / 2
     }
 
     atField(x: number, y: number): this {

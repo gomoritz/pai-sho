@@ -1,9 +1,69 @@
 import { AirTile, AvatarTile, EarthTile, FireTile, LotusTile, Tile, WaterTile } from "./tiles.js";
-import { renderObjects } from "../render-core.js";
+import { gameBoardRenderer, renderObjects } from "../render-core.js";
+import { canvas, draw } from "../game.js";
+import { subtract } from "../shapes/point.js";
+import { gameBoard } from "../logic-core.js";
 
-export function activateLineup(isOpponent: boolean) {
+export let myTiles: Tile[] = []
+export let opponentTiles: Tile[] = []
+
+let draggingTile: Tile | null = null
+let hoveredTile: Tile | null = null
+
+export function buildLineup() {
+    placeTilesFor("me")
+    placeTilesFor("opponent")
+
+    canvas.addEventListener("mousemove", event => {
+        const center = gameBoardRenderer.center
+        const relativePoint = subtract({ x: event.clientX, y: event.clientY }, center)
+
+        const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
+
+        if (hovered === undefined) {
+            canvas.style.cursor = "default"
+            hoveredTile = null
+        } else {
+            canvas.style.cursor = "pointer"
+            hoveredTile = hovered
+        }
+
+        if (draggingTile != null) {
+            draggingTile.dragPosition = { x: event.clientX, y: event.clientY }
+            draw()
+        }
+    })
+
+    canvas.addEventListener("mousedown", event => {
+        if (hoveredTile != null) {
+            draggingTile = hoveredTile
+            draggingTile.isBeingDragged = true
+            draggingTile.dragPosition = { x: event.clientX, y: event.clientY }
+            hoveredTile = null
+        }
+    })
+
+    canvas.addEventListener("mouseup", () => {
+        if (draggingTile != null) {
+            const relative = subtract(draggingTile.dragPosition!!, gameBoardRenderer.center)
+            const field = gameBoard.getClosestField(relative)
+
+            if (field != null) {
+                draggingTile.field = field
+            }
+
+            draggingTile.isBeingDragged = false
+            draggingTile = null
+
+            draw()
+        }
+    })
+}
+
+function placeTilesFor(player: "me" | "opponent") {
+    const isOpponent = player === "opponent"
     const n = isOpponent ? -1 : 1
-    const all: Tile[] = [
+    const tiles: Tile[] = [
         new LotusTile().atField(-6 * n, -6 * n),
 
         new AirTile().atField(-5 * n, -6 * n),
@@ -23,7 +83,12 @@ export function activateLineup(isOpponent: boolean) {
         new AvatarTile().atField(-4 * n, -4 * n)
     ]
 
-    if (isOpponent) all.forEach(it => it.isDark = true)
+    if (isOpponent) {
+        tiles.forEach(it => it.isDark = true)
+        opponentTiles = tiles
+    } else {
+        myTiles = tiles
+    }
 
-    renderObjects.push(...all)
+    renderObjects.push(...tiles)
 }
