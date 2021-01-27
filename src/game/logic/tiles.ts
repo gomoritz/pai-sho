@@ -54,6 +54,14 @@ export abstract class Tile extends RenderObject {
 
     requiresDefer = () => this.isBeingDragged
 
+    startHover() {
+        this.isHovered = true
+    }
+
+    endHover() {
+        this.isHovered = false
+    }
+
     isInsideTile(point: Point) {
         const myPosition = this.field?.translateToPoint()!!
         const relativePoint = subtract(point, myPosition)
