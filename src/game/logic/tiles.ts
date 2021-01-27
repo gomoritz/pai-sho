@@ -7,7 +7,7 @@ import { gameBoard } from "../logic-core.js";
 
 const size = 42
 
-export abstract class Tile implements RenderObject {
+export abstract class Tile extends RenderObject {
     public isDark: boolean
     public field: Field | null = null
 
@@ -16,7 +16,7 @@ export abstract class Tile implements RenderObject {
 
     protected abstract imageResource: string
 
-    render(): void {
+    render = () => {
         if (this.field == undefined) return
 
         const center = gameBoardRenderer.center
@@ -42,6 +42,8 @@ export abstract class Tile implements RenderObject {
         ctx.imageSmoothingQuality = "high"
         ctx.drawImage(image, cornerX, cornerY, size, size)
     }
+
+    requiresDefer = () => this.isBeingDragged
 
     isInsideTile(point: Point) {
         const myPosition = this.field?.translateToPoint()!!

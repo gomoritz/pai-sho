@@ -5,10 +5,10 @@ import { drawTriangle } from "../shapes/triangle.js";
 import { innerTrianglesHeight, gameBoardRadius, lineGap } from "../utils/dimensions.js";
 import Point from "../shapes/point.js";
 
-export default class GameBoardRender implements RenderObject {
+export default class GameBoardRender extends RenderObject {
     public center: Point
 
-    render() {
+    render = () => {
         this.center = {
             x: canvas.width / 2,
             y: canvas.height / 2
