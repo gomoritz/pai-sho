@@ -20,17 +20,23 @@ export function buildLineup() {
 
         const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
 
-        if (hovered === undefined) {
-            canvas.style.cursor = "default"
-            hoveredTile = null
-        } else {
-            canvas.style.cursor = "pointer"
-            hoveredTile = hovered
-        }
-
         if (draggingTile != null) {
             draggingTile.dragPosition = { x: event.clientX, y: event.clientY }
             draw()
+        } else {
+            if (hovered === undefined) {
+                canvas.style.cursor = "default"
+                if (hoveredTile != null) {
+                    hoveredTile.isHovered = false
+                    hoveredTile = null
+                    draw()
+                }
+            } else {
+                canvas.style.cursor = "pointer"
+                hoveredTile = hovered
+                hoveredTile.isHovered = true
+                draw()
+            }
         }
     })
 
@@ -39,6 +45,8 @@ export function buildLineup() {
             draggingTile = hoveredTile
             draggingTile.isBeingDragged = true
             draggingTile.dragPosition = { x: event.clientX, y: event.clientY }
+
+            hoveredTile.isHovered = false
             hoveredTile = null
         }
     })

@@ -11,6 +11,7 @@ export abstract class Tile extends RenderObject {
     public isDark: boolean
     public field: Field | null = null
 
+    public isHovered: boolean = false
     public isBeingDragged: boolean = false
     public dragPosition: Point | null = null
 
@@ -41,6 +42,14 @@ export abstract class Tile extends RenderObject {
         ctx.imageSmoothingEnabled = true
         ctx.imageSmoothingQuality = "high"
         ctx.drawImage(image, cornerX, cornerY, size, size)
+
+        if (this.isBeingDragged || this.isHovered) {
+            ctx.fillStyle = "rgba(255,255,255,.15)"
+            ctx.beginPath()
+            ctx.arc(x, y, size / 2, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.closePath()
+        }
     }
 
     requiresDefer = () => this.isBeingDragged
