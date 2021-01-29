@@ -18,29 +18,34 @@ let hoveredTile: Tile | null = null
 
 export function createTileListeners() {
     if (movingMode == "drag") {
-        canvas.addEventListener("mousedown", handleMouseDown)
-        canvas.addEventListener("mouseup", handleMouseUp)
+        canvas.addEventListener("mousedown", handleInteractionStart)
+        canvas.addEventListener("mouseup", handleInteractionEnd)
+
+        canvas.addEventListener("touchstart", handleInteractionStart)
+        canvas.addEventListener("touchend", handleInteractionEnd)
     } else {
         canvas.addEventListener("click", handleMouseClick)
     }
 
-    canvas.addEventListener("mousemove", handleMouseMove)
+    canvas.addEventListener("mousemove", handleMove)
+    canvas.addEventListener("touchmove", handleMove)
 }
 
 export function removeListeners() {
-    canvas.removeEventListener("mousemove", handleMouseMove)
-    canvas.removeEventListener("mousedown", handleMouseDown)
-    canvas.removeEventListener("mouseup", handleMouseUp)
+    canvas.removeEventListener("mousemove", handleMove)
+    canvas.removeEventListener("mousedown", handleInteractionStart)
+    canvas.removeEventListener("mouseup", handleInteractionEnd)
     canvas.removeEventListener("mouseclick", handleMouseClick)
 }
 
-function handleMouseMove(event: MouseEvent) {
+function handleMove(event: MouseEvent | TouchEvent) {
+    const point = parseTouchOrMouse(event)
+
     if (movingTile != null && movingMode == "drag") {
-        movingTile.dragPosition = { x: event.clientX, y: event.clientY }
+        movingTile.dragPosition = point
         draw()
     } else {
-        const center = gameBoardRenderer.center
-        const relativePoint = subtract({ x: event.clientX, y: event.clientY }, center)
+        const relativePoint = subtract(point, gameBoardRenderer.center)
         const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
 
         if (hovered === undefined) {
@@ -55,7 +60,7 @@ function handleMouseMove(event: MouseEvent) {
             draw()
 
             if (isDebug) {
-                const { x, y } = { x: event.clientX + 15, y: event.clientY + 30 }
+                const { x, y } = { x: point.x + 15, y: point.y + 30 }
 
                 const dbg = `${hovered.constructor.name}[${hovered.field.x},${hovered.field.y}]`;
                 ctx.font = "bold 18px monospace"
@@ -69,14 +74,18 @@ function handleMouseMove(event: MouseEvent) {
     }
 }
 
-function handleMouseDown(event: MouseEvent) {
-    if (hoveredTile != null) {
-        setDraggingTile(hoveredTile, { x: event.clientX, y: event.clientY })
+function handleInteractionStart(event: MouseEvent | TouchEvent) {
+    const point = parseTouchOrMouse(event)
+    const relativePoint = subtract(point, gameBoardRenderer.center)
+    const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
+
+    if (hovered != null) {
+        setDraggingTile(hovered, point)
         clearHoveredTile()
     }
 }
 
-function handleMouseUp(_: MouseEvent) {
+function handleInteractionEnd(_: MouseEvent) {
     if (movingTile != null) {
         const relative = subtract(movingTile.dragPosition!!, gameBoardRenderer.center)
         const field = gameBoard.getClosestField(relative)
@@ -151,4 +160,10 @@ function clearClickedTile() {
         movingTile.isClicked = false
         movingTile = null
     }
+}
+
+function parseTouchOrMouse(event: MouseEvent | TouchEvent): Point {
+    return "clientX" in event
+        ? { x: event.clientX, y: event.clientY }
+        : { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }
 }

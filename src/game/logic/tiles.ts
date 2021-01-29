@@ -24,6 +24,7 @@ export abstract class Tile extends RenderObject {
         const center = gameBoardRenderer.center
         const id = this.isDark ? this.imageResource + "__dark" : this.imageResource
         const image = document.getElementById(id) as HTMLImageElement
+        const renderSize = this.isBeingDragged || this.isClicked ? 45 : size
         let { x, y } = add(center, this.field.translateToPoint()!!)
 
         if (this.isBeingDragged && this.dragPosition != null) {
@@ -31,29 +32,30 @@ export abstract class Tile extends RenderObject {
             y = this.dragPosition.y
         }
 
-        const cornerX = x - size / 2
-        const cornerY = y - size / 2
+        const cornerX = x - renderSize / 2
+        const cornerY = y - renderSize / 2
+        const shadowOffset = this.isBeingDragged || this.isClicked ? 2 : 1
 
         ctx.fillStyle = "rgba(0,0,0,.7)"
         ctx.beginPath()
-        ctx.arc(x + 1, y + 2, size / 2, 0, Math.PI * 2)
+        ctx.arc(x + shadowOffset, y + 2 * shadowOffset, renderSize / 2, 0, Math.PI * 2)
         ctx.fill()
         ctx.closePath()
 
         ctx.imageSmoothingEnabled = true
         ctx.imageSmoothingQuality = "high"
-        ctx.drawImage(image, cornerX, cornerY, size, size)
+        ctx.drawImage(image, cornerX, cornerY, renderSize, renderSize)
 
         if (this.isClicked) {
             ctx.fillStyle = "rgba(255,255,255,.3)"
             ctx.beginPath()
-            ctx.arc(x, y, size / 2, 0, Math.PI * 2)
+            ctx.arc(x, y, renderSize / 2, 0, Math.PI * 2)
             ctx.fill()
             ctx.closePath()
         } else if (this.isBeingDragged || this.isHovered) {
             ctx.fillStyle = "rgba(255,255,255,.15)"
             ctx.beginPath()
-            ctx.arc(x, y, size / 2, 0, Math.PI * 2)
+            ctx.arc(x, y, renderSize / 2, 0, Math.PI * 2)
             ctx.fill()
             ctx.closePath()
         }
@@ -78,7 +80,7 @@ export abstract class Tile extends RenderObject {
     }
 
     atField(x: number, y: number): this {
-        this.field = gameBoard.getField(x,  y)!!
+        this.field = gameBoard.getField(x, y)!!
         this.field.tile = this
         return this
     }
