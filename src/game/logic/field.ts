@@ -3,8 +3,11 @@ import { ctx } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
 import { Direction } from "./direction.js";
 import Point from "../shapes/point.js";
+import { Tile } from "./tiles.js";
 
 export default class Field {
+    public tile: Tile | null = null
+
     constructor(public x: number, public y: number) {
     }
 

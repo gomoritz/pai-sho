@@ -1,5 +1,5 @@
 import RenderObject from "../objects/render-object.js";
-import { ctx } from "../game.js";
+import { ctx, isDebug } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
 import Point, { add, subtract } from "../shapes/point.js";
 import Field from "./field.js";
@@ -9,7 +9,7 @@ const size = 42
 
 export abstract class Tile extends RenderObject {
     public isDark: boolean
-    public field: Field | null = null
+    public field: Field
 
     public isHovered: boolean = false
     public isBeingDragged: boolean = false
@@ -78,7 +78,8 @@ export abstract class Tile extends RenderObject {
     }
 
     atField(x: number, y: number): this {
-        this.field = gameBoard.getField(x,  y)
+        this.field = gameBoard.getField(x,  y)!!
+        this.field.tile = this
         return this
     }
 
