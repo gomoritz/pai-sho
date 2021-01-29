@@ -12,7 +12,7 @@ export default class GameBoard {
         // calculate intersection of functionXForFieldX and functionXForFieldY
         const y = ((lineGap * fieldX) - (lineGap * -fieldY)) / 2
         const x = functionXForFieldX(y)
-        const point = { x: x, y: -y }
+        const point = { x: -x, y: y }
 
         return this.isInsideGrid(point) ? point : null
     }

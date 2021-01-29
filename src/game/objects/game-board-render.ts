@@ -118,7 +118,7 @@ export default class GameBoardRender extends RenderObject {
             ctx.lineTo(this.center.x + gameBoardRadius, this.center.y + gameBoardRadius - lineOffset)
             ctx.stroke()
 
-            ctx.fillText("x=" + i, this.center.x + gameBoardRadius + 5, this.center.y + gameBoardRadius - lineOffset + 10)
+            ctx.fillText("x=" + -i, this.center.x + gameBoardRadius + 5, this.center.y + gameBoardRadius - lineOffset + 10)
 
             if (i == 0) continue
 
@@ -127,7 +127,7 @@ export default class GameBoardRender extends RenderObject {
             ctx.lineTo(this.center.x + gameBoardRadius - lineOffset, this.center.y + gameBoardRadius)
             ctx.stroke()
 
-            ctx.fillText("x=" + -i, this.center.x - gameBoardRadius - 55, this.center.y - gameBoardRadius + lineOffset + 5)
+            ctx.fillText("x=" + i, this.center.x - gameBoardRadius - 55, this.center.y - gameBoardRadius + lineOffset + 5)
         }
 
         if (isDebug) {
@@ -143,7 +143,7 @@ export default class GameBoardRender extends RenderObject {
             ctx.lineTo(this.center.x - gameBoardRadius, this.center.y + gameBoardRadius - lineOffset)
             ctx.stroke()
 
-            ctx.fillText("y=" + i, this.center.x + gameBoardRadius - lineOffset - 15, this.center.y - gameBoardRadius - 10)
+            ctx.fillText("y=" + -i, this.center.x + gameBoardRadius - lineOffset - 15, this.center.y - gameBoardRadius - 10)
 
             if (i == 0) continue
 
@@ -152,7 +152,7 @@ export default class GameBoardRender extends RenderObject {
             ctx.lineTo(this.center.x - gameBoardRadius + lineOffset, this.center.y + gameBoardRadius)
             ctx.stroke()
 
-            ctx.fillText("y=" + -i, this.center.x - gameBoardRadius + lineOffset - 25, this.center.y + gameBoardRadius + 23)
+            ctx.fillText("y=" + i, this.center.x - gameBoardRadius + lineOffset - 25, this.center.y + gameBoardRadius + 23)
         }
 
         if (isDebug) this.clipGameBoardCircle()
