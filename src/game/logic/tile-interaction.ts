@@ -5,16 +5,46 @@
 
 import { Tile } from "./tiles.js";
 import { canvas, ctx, draw, isDebug } from "../game.js";
-import { gameBoardRenderer } from "../render-core.js";
-import Point, { subtract } from "../shapes/point.js";
+import { gameBoardRenderer, renderObjects } from "../render-core.js";
+import Point, { add, subtract } from "../shapes/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "./lineup.js";
-import { tryTileMove } from "./tile-moves.js";
+import { canMoveTileToField, tryTileMove } from "./tile-moves.js";
+import RenderObject from "../objects/render-object.js";
+import { cancelEvent } from "../utils/events.js";
 
 let movingMode: "drag" | "click" = "drag"
 
 let movingTile: Tile | null = null
 let hoveredTile: Tile | null = null
+
+class SuggestionRenderer extends RenderObject {
+    render = () => {
+        if (movingTile != null) {
+            const relPos = subtract(movingTile.dragPosition!!, gameBoardRenderer.center)
+            const closestField = gameBoard.getClosestField(relPos)
+
+            Object.values(gameBoard.fields)
+                .filter(it => canMoveTileToField(movingTile!!, it))
+                .forEach(field => {
+                    const pos = add(field.translateToPoint()!!, gameBoardRenderer.center)
+
+                    ctx.save()
+                    ctx.globalAlpha = .4
+                    movingTile!!.renderTileImage(pos.x - 20, pos.y - 20, 40)
+                    ctx.restore()
+
+                    if (field.x == closestField?.x && field.y == closestField.y) {
+                        ctx.beginPath()
+                        ctx.arc(pos.x, pos.y, 20, 0, Math.PI * 2)
+                        ctx.fillStyle = "rgba(0,0,0,.3)"
+                        ctx.fill()
+                        ctx.closePath()
+                    }
+                })
+        }
+    }
+}
 
 export function createTileListeners() {
     if (movingMode == "drag") {
@@ -29,6 +59,9 @@ export function createTileListeners() {
 
     canvas.addEventListener("mousemove", handleMove)
     canvas.addEventListener("touchmove", handleMove)
+    canvas.addEventListener("contextmenu", cancelEvent)
+
+    renderObjects.push(new SuggestionRenderer())
 }
 
 export function removeListeners() {
@@ -63,7 +96,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
                 const { x, y } = { x: point.x + 15, y: point.y + 30 }
 
                 const dbg = `${hovered.constructor.name}[${hovered.field.x},${hovered.field.y}]`;
-                ctx.font = "bold 18px monospace"
+                ctx.font = "bold 16px monospace"
                 ctx.fillStyle = "#000000FF"
                 ctx.fillRect(x, y - 16, ctx.measureText(dbg).width, 20)
 
@@ -75,6 +108,8 @@ function handleMove(event: MouseEvent | TouchEvent) {
 }
 
 function handleInteractionStart(event: MouseEvent | TouchEvent) {
+    if ("button" in event && event.button != 0) return
+
     const point = parseTouchOrMouse(event)
     const relativePoint = subtract(point, gameBoardRenderer.center)
     const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
@@ -85,7 +120,9 @@ function handleInteractionStart(event: MouseEvent | TouchEvent) {
     }
 }
 
-function handleInteractionEnd(_: MouseEvent) {
+function handleInteractionEnd(event: MouseEvent) {
+    if ("button" in event && event.button != 0) return
+
     if (movingTile != null) {
         const relative = subtract(movingTile.dragPosition!!, gameBoardRenderer.center)
         const field = gameBoard.getClosestField(relative)
@@ -100,6 +137,8 @@ function handleInteractionEnd(_: MouseEvent) {
 }
 
 function handleMouseClick(event: MouseEvent) {
+    if (event.button != 0) return
+
     if (movingTile == null) {
         if (hoveredTile != null) {
             setClickedTile(hoveredTile)

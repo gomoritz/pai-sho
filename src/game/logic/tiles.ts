@@ -1,31 +1,32 @@
 import RenderObject from "../objects/render-object.js";
-import { ctx, isDebug } from "../game.js";
+import { ctx } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
 import Point, { add, subtract } from "../shapes/point.js";
 import Field from "./field.js";
 import { gameBoard } from "../logic-core.js";
 
-const size = 42
+export const size = 42
 
 export abstract class Tile extends RenderObject {
-    public isDark: boolean
     public field: Field
+
+    private _isDark: boolean = false
+    private imageElement: HTMLImageElement = document.getElementById(this.imageResource) as HTMLImageElement
 
     public isHovered: boolean = false
     public isBeingDragged: boolean = false
     public isClicked: boolean = false;
     public dragPosition: Point | null = null
 
-    protected abstract imageResource: string
+    protected constructor(private imageResource: string) {
+        super();
+    }
 
     render = () => {
         if (this.field == undefined) return
 
-        const center = gameBoardRenderer.center
-        const id = this.isDark ? this.imageResource + "__dark" : this.imageResource
-        const image = document.getElementById(id) as HTMLImageElement
         const renderSize = this.isBeingDragged || this.isClicked ? 45 : size
-        let { x, y } = add(center, this.field.translateToPoint()!!)
+        let { x, y } = add(gameBoardRenderer.center, this.field.translateToPoint()!!)
 
         if (this.isBeingDragged && this.dragPosition != null) {
             x = this.dragPosition.x
@@ -42,9 +43,7 @@ export abstract class Tile extends RenderObject {
         ctx.fill()
         ctx.closePath()
 
-        ctx.imageSmoothingEnabled = true
-        ctx.imageSmoothingQuality = "high"
-        ctx.drawImage(image, cornerX, cornerY, renderSize, renderSize)
+        this.renderTileImage(cornerX, cornerY, renderSize)
 
         if (this.isClicked) {
             ctx.fillStyle = "rgba(255,255,255,.3)"
@@ -61,7 +60,22 @@ export abstract class Tile extends RenderObject {
         }
     }
 
+    renderTileImage(x: number, y: number, size: number) {
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+        ctx.drawImage(this.imageElement, x, y, size, size)
+    }
+
     requiresDefer = () => this.isBeingDragged || this.isClicked
+
+    get isDark() {
+        return this._isDark
+    }
+
+    set isDark(value) {
+        this._isDark = value
+        this.imageElement = document.getElementById(value ? this.imageResource + "__dark" : this.imageResource) as HTMLImageElement
+    }
 
     startHover() {
         this.isHovered = true
@@ -89,7 +103,9 @@ export abstract class Tile extends RenderObject {
 }
 
 export class LotusTile extends Tile {
-    imageResource: string = "lotus";
+    constructor() {
+        super("lotus");
+    }
 
     canThrow(other: Tile): boolean {
         return false;
@@ -97,7 +113,9 @@ export class LotusTile extends Tile {
 }
 
 export class AvatarTile extends Tile {
-    imageResource: string = "avatar"
+    constructor() {
+        super("avatar");
+    }
 
     canThrow(other: Tile): boolean {
         return true;
@@ -105,7 +123,9 @@ export class AvatarTile extends Tile {
 }
 
 export class AirTile extends Tile {
-    imageResource: string = "air"
+    constructor() {
+        super("air");
+    }
 
     canThrow(other: Tile): boolean {
         return other instanceof WaterTile;
@@ -113,7 +133,9 @@ export class AirTile extends Tile {
 }
 
 export class EarthTile extends Tile {
-    imageResource: string = "earth"
+    constructor() {
+        super("earth");
+    }
 
     canThrow(other: Tile): boolean {
         return other instanceof FireTile;
@@ -121,7 +143,9 @@ export class EarthTile extends Tile {
 }
 
 export class FireTile extends Tile {
-    imageResource: string = "fire"
+    constructor() {
+        super("fire");
+    }
 
     canThrow(other: Tile): boolean {
         return other instanceof AirTile;
@@ -129,7 +153,9 @@ export class FireTile extends Tile {
 }
 
 export class WaterTile extends Tile {
-    imageResource: string = "water"
+    constructor() {
+        super("water");
+    }
 
     canThrow(other: Tile): boolean {
         return other instanceof EarthTile;
