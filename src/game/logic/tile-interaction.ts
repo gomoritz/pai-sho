@@ -4,11 +4,12 @@
  */
 
 import { Tile } from "./tiles.js";
-import { canvas, draw } from "../game.js";
+import { canvas, ctx, draw, isDebug } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
 import Point, { subtract } from "../shapes/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "./lineup.js";
+import { tryTileMove } from "./tile-moves.js";
 
 let movingMode: "drag" | "click" = "drag"
 
@@ -52,6 +53,18 @@ function handleMouseMove(event: MouseEvent) {
             canvas.style.cursor = "pointer"
             setHoveredTile(hovered)
             draw()
+
+            if (isDebug) {
+                const { x, y } = { x: event.clientX + 15, y: event.clientY + 30 }
+
+                const dbg = `${hovered.constructor.name}[${hovered.field.x},${hovered.field.y}]`;
+                ctx.font = "bold 18px monospace"
+                ctx.fillStyle = "#000000FF"
+                ctx.fillRect(x, y - 16, ctx.measureText(dbg).width, 20)
+
+                ctx.fillStyle = "#FFFFFFFF"
+                ctx.fillText(dbg, x, y)
+            }
         }
     }
 }
@@ -69,7 +82,7 @@ function handleMouseUp(_: MouseEvent) {
         const field = gameBoard.getClosestField(relative)
 
         if (field != null) {
-            movingTile.field = field
+            tryTileMove(movingTile, field)
         }
 
         clearDraggingTile()
@@ -88,7 +101,7 @@ function handleMouseClick(event: MouseEvent) {
         const field = gameBoard.getClosestField(relative)
 
         if (field != null) {
-            movingTile.field = field
+            tryTileMove(movingTile, field)
         }
 
         clearClickedTile()
