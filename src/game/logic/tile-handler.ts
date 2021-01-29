@@ -5,55 +5,38 @@ import Point, { subtract } from "../shapes/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "./lineup.js";
 
-let draggingTile: Tile | null = null
+let movingMode: "drag" | "click" = "click"
+
+let movingTile: Tile | null = null
 let hoveredTile: Tile | null = null
 
 export function createTileListeners() {
+    if (movingMode == "drag") {
+        canvas.addEventListener("mousedown", handleMouseDown)
+        canvas.addEventListener("mouseup", handleMouseUp)
+    } else {
+        canvas.addEventListener("click", handleMouseClick)
+    }
+
     canvas.addEventListener("mousemove", handleMouseMove)
-    canvas.addEventListener("mousedown", handleMouseDown)
-    canvas.addEventListener("mouseup", handleMouseUp)
 }
 
-function setHoveredTile(newTile: Tile) {
-    clearHoveredTile()
-
-    hoveredTile = newTile
-    hoveredTile.startHover()
-}
-
-function clearHoveredTile() {
-    if (hoveredTile != null) {
-        hoveredTile.endHover()
-        hoveredTile = null
-    }
-}
-
-function setDraggingTile(newTile: Tile, dragPosition: Point) {
-    clearDraggingTile()
-
-    draggingTile = newTile
-    draggingTile.isBeingDragged = true
-    draggingTile.dragPosition = dragPosition
-}
-
-function clearDraggingTile() {
-    if (draggingTile != null) {
-        draggingTile.isBeingDragged = false
-        draggingTile.dragPosition = null
-        draggingTile = null
-    }
+export function removeListeners() {
+    canvas.removeEventListener("mousemove", handleMouseMove)
+    canvas.removeEventListener("mousedown", handleMouseDown)
+    canvas.removeEventListener("mouseup", handleMouseUp)
+    canvas.removeEventListener("mouseclick", handleMouseClick)
 }
 
 function handleMouseMove(event: MouseEvent) {
-    const center = gameBoardRenderer.center
-    const relativePoint = subtract({ x: event.clientX, y: event.clientY }, center)
-
-    const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
-
-    if (draggingTile != null) {
-        draggingTile.dragPosition = { x: event.clientX, y: event.clientY }
+    if (movingTile != null && movingMode == "drag") {
+        movingTile.dragPosition = { x: event.clientX, y: event.clientY }
         draw()
     } else {
+        const center = gameBoardRenderer.center
+        const relativePoint = subtract({ x: event.clientX, y: event.clientY }, center)
+        const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
+
         if (hovered === undefined) {
             canvas.style.cursor = "default"
             if (hoveredTile != null) {
@@ -76,15 +59,78 @@ function handleMouseDown(event: MouseEvent) {
 }
 
 function handleMouseUp(_: MouseEvent) {
-    if (draggingTile != null) {
-        const relative = subtract(draggingTile.dragPosition!!, gameBoardRenderer.center)
+    if (movingTile != null) {
+        const relative = subtract(movingTile.dragPosition!!, gameBoardRenderer.center)
         const field = gameBoard.getClosestField(relative)
 
         if (field != null) {
-            draggingTile.field = field
+            movingTile.field = field
         }
 
         clearDraggingTile()
         draw()
+    }
+}
+
+function handleMouseClick(event: MouseEvent) {
+    if (movingTile == null) {
+        if (hoveredTile != null) {
+            setClickedTile(hoveredTile)
+            draw()
+        }
+    } else {
+        const relative = subtract({ x: event.clientX, y: event.clientY }, gameBoardRenderer.center)
+        const field = gameBoard.getClosestField(relative)
+
+        if (field != null) {
+            movingTile.field = field
+        }
+
+        clearClickedTile()
+        draw()
+    }
+}
+
+function setHoveredTile(newTile: Tile) {
+    clearHoveredTile()
+
+    hoveredTile = newTile
+    hoveredTile.startHover()
+}
+
+function clearHoveredTile() {
+    if (hoveredTile != null) {
+        hoveredTile.endHover()
+        hoveredTile = null
+    }
+}
+
+function setDraggingTile(newTile: Tile, dragPosition: Point) {
+    clearDraggingTile()
+
+    movingTile = newTile
+    movingTile.isBeingDragged = true
+    movingTile.dragPosition = dragPosition
+}
+
+function clearDraggingTile() {
+    if (movingTile != null) {
+        movingTile.isBeingDragged = false
+        movingTile.dragPosition = null
+        movingTile = null
+    }
+}
+
+function setClickedTile(newTile: Tile) {
+    clearClickedTile()
+
+    movingTile = newTile
+    movingTile.isClicked = true
+}
+
+function clearClickedTile() {
+    if (movingTile != null) {
+        movingTile.isClicked = false
+        movingTile = null
     }
 }

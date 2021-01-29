@@ -13,6 +13,7 @@ export abstract class Tile extends RenderObject {
 
     public isHovered: boolean = false
     public isBeingDragged: boolean = false
+    public isClicked: boolean = false;
     public dragPosition: Point | null = null
 
     protected abstract imageResource: string
@@ -43,7 +44,13 @@ export abstract class Tile extends RenderObject {
         ctx.imageSmoothingQuality = "high"
         ctx.drawImage(image, cornerX, cornerY, size, size)
 
-        if (this.isBeingDragged || this.isHovered) {
+        if (this.isClicked) {
+            ctx.fillStyle = "rgba(255,255,255,.3)"
+            ctx.beginPath()
+            ctx.arc(x, y, size / 2, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.closePath()
+        } else if (this.isBeingDragged || this.isHovered) {
             ctx.fillStyle = "rgba(255,255,255,.15)"
             ctx.beginPath()
             ctx.arc(x, y, size / 2, 0, Math.PI * 2)
@@ -52,7 +59,7 @@ export abstract class Tile extends RenderObject {
         }
     }
 
-    requiresDefer = () => this.isBeingDragged
+    requiresDefer = () => this.isBeingDragged || this.isClicked
 
     startHover() {
         this.isHovered = true
