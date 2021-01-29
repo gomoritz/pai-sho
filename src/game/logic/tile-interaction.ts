@@ -1,3 +1,8 @@
+/**
+ * This file handles the interaction with the user to move tiles around
+ * the game board.
+ */
+
 import { Tile } from "./tiles.js";
 import { canvas, draw } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
@@ -5,7 +10,7 @@ import Point, { subtract } from "../shapes/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "./lineup.js";
 
-let movingMode: "drag" | "click" = "click"
+let movingMode: "drag" | "click" = "drag"
 
 let movingTile: Tile | null = null
 let hoveredTile: Tile | null = null
