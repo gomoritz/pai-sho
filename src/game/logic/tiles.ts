@@ -8,7 +8,8 @@ import { gameBoard } from "../logic-core.js";
 export const size = 42
 
 export abstract class Tile extends RenderObject {
-    public field: Field
+    public field: Field | null
+    public isThrown = false
 
     private _isDark: boolean = false
     private imageElement: HTMLImageElement = document.getElementById(this.imageResource) as HTMLImageElement
@@ -23,7 +24,7 @@ export abstract class Tile extends RenderObject {
     }
 
     render = () => {
-        if (this.field == undefined) return
+        if (this.isThrown || this.field == undefined) return
 
         const renderSize = this.isBeingDragged || this.isClicked ? 45 : size
         let { x, y } = add(gameBoardRenderer.center, this.field.translateToPoint()!!)
@@ -75,6 +76,14 @@ export abstract class Tile extends RenderObject {
     set isDark(value) {
         this._isDark = value
         this.imageElement = document.getElementById(value ? this.imageResource + "__dark" : this.imageResource) as HTMLImageElement
+    }
+
+    setThrown() {
+        this.isThrown = true
+        this.isHovered = false
+        this.isBeingDragged = false
+        this.isClicked = false
+        this.field = null
     }
 
     startHover() {

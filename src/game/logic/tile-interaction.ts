@@ -14,7 +14,7 @@ import { cancelEvent } from "../utils/events.js";
 import Field from "./field.js";
 import { HintRenderer } from "./hint-renderer.js";
 
-let movingMode: "drag" | "click" = "click"
+let movingMode: "drag" | "click" = "drag"
 let mousePosition: Point = { x: 0, y: 0 }
 let closestHintField: Field | null = null
 
@@ -97,7 +97,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
             if (isDebug) {
                 const { x, y } = { x: point.x + 15, y: point.y + 30 }
 
-                const dbg = `${hovered.constructor.name}[${hovered.field.x},${hovered.field.y}]`;
+                const dbg = `${hovered.constructor.name}[${hovered.field!!.x},${hovered.field!!.y}]`;
                 ctx.font = "bold 16px monospace"
                 ctx.fillStyle = "#000000FF"
                 ctx.fillRect(x, y - 16, ctx.measureText(dbg).width, 20)

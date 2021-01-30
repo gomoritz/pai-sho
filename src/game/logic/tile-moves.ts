@@ -4,20 +4,19 @@ import Field from "./field.js";
 export function tryTileMove(tile: Tile, field: Field): void {
     if (!canMoveTileToField(tile, field)) return
 
-    tile.field.tile = null
-    field.tile = tile
-
+    tile.field!!.tile = null
     tile.field = field
+    field.tile = tile
 }
 
 export function canMoveTileToField(tile: Tile, field: Field): boolean {
-    const previousField = tile.field;
+    const previousField = tile.field!!;
 
     // check is occupied
     if (field.tile != null) return false
 
     if (!previousField.isNeighbourField(field)) {
-        const isJump = !(tile instanceof LotusTile) && canPerformJump(tile.field, field)
+        const isJump = !(tile instanceof LotusTile) && canPerformJump(tile.field!!, field)
         if (!isJump) return false
     }
 
