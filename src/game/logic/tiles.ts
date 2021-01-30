@@ -19,7 +19,7 @@ export abstract class Tile extends RenderObject {
     public isClicked: boolean = false;
     public dragPosition: Point | null = null
 
-    protected constructor(private imageResource: string) {
+    protected constructor(private imageResource: string, public id: string) {
         super();
     }
 
@@ -112,8 +112,8 @@ export abstract class Tile extends RenderObject {
 }
 
 export class LotusTile extends Tile {
-    constructor() {
-        super("lotus");
+    constructor(public id: string) {
+        super("lotus", id);
     }
 
     canThrow(other: Tile): boolean {
@@ -122,8 +122,8 @@ export class LotusTile extends Tile {
 }
 
 export class AvatarTile extends Tile {
-    constructor() {
-        super("avatar");
+    constructor(public id: string) {
+        super("avatar", id);
     }
 
     canThrow(other: Tile): boolean {
@@ -132,8 +132,8 @@ export class AvatarTile extends Tile {
 }
 
 export class AirTile extends Tile {
-    constructor() {
-        super("air");
+    constructor(public id: string) {
+        super("air", id);
     }
 
     canThrow(other: Tile): boolean {
@@ -142,8 +142,8 @@ export class AirTile extends Tile {
 }
 
 export class EarthTile extends Tile {
-    constructor() {
-        super("earth");
+    constructor(public id: string) {
+        super("earth", id);
     }
 
     canThrow(other: Tile): boolean {
@@ -152,8 +152,8 @@ export class EarthTile extends Tile {
 }
 
 export class FireTile extends Tile {
-    constructor() {
-        super("fire");
+    constructor(public id: string) {
+        super("fire", id);
     }
 
     canThrow(other: Tile): boolean {
@@ -162,8 +162,8 @@ export class FireTile extends Tile {
 }
 
 export class WaterTile extends Tile {
-    constructor() {
-        super("water");
+    constructor(public id: string) {
+        super("water", id);
     }
 
     canThrow(other: Tile): boolean {
