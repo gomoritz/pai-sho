@@ -2,4 +2,8 @@
 pai-sho.iml
 
 build/
+buildcache/
 *.js
+
+node_modules/
+package-lock.json
