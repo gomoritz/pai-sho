@@ -1,12 +1,27 @@
 import { LotusTile, Tile } from "./tiles.js";
 import Field from "./field.js";
+import { emitMoveTile } from "../client-core.js";
+import { gameBoard } from "../logic-core.js";
+import { TileMoveResponse } from "../../shared/move-events.js";
+import { myTiles, opponentTiles } from "./lineup.js";
+import { draw } from "../game.js";
 
-export function tryTileMove(tile: Tile, field: Field): void {
+export function tryTileMove(tile: Tile, field: Field) {
     if (!canMoveTileToField(tile, field)) return
+
+    emitMoveTile(tile, field)
+}
+
+export function doTileMove(event: TileMoveResponse) {
+    const tile = (event.isMoveByMe ? myTiles : opponentTiles).find(it => it.id == event.tileId)
+    const field = gameBoard.getField(event.field.x, event.field.y)
+    if (tile == null || field == null) return
 
     tile.field!!.tile = null
     tile.field = field
     field.tile = tile
+
+    draw()
 }
 
 export function canMoveTileToField(tile: Tile, field: Field): boolean {
