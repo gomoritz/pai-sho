@@ -2,7 +2,7 @@
     "name": "pai-sho",
     "version": "1.0.0",
     "description": "",
-    "main": "src/index.js",
+    "main": "src/server/index.js",
     "type": "module",
     "scripts": {
         "start": "node ."
@@ -11,7 +11,10 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "express": "^4.17.1"
+        "@types/socket.io": "^2.1.13",
+        "@types/socket.io-client": "^1.4.35",
+        "express": "^4.17.1",
+        "socket.io": "^3.1.0"
     },
     "devDependencies": {
         "@types/express": "^4.17.11"
