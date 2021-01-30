@@ -1,35 +1,15 @@
-import Player from "../player.js";
-import { TileMoveEvent, TileMoveResponse } from "../../shared/move-events.js";
+import Player from "../objects/player.js";
+import PaiShoGame from "../game/pai-sho-game.js";
+import { TileMoveEvent } from "../../shared/move-events.js";
 
 export default class GameRoom {
     playerA: Player | null = null
     playerB: Player | null = null
-
     allPlayers: Player[] = []
 
+    readonly game: PaiShoGame = new PaiShoGame(this)
+
     constructor(public id: string) {
-    }
-
-    handleTileMove(player: Player, event: TileMoveEvent) {
-        let serverField: { x: number, y: number }
-        let isExecutorA: boolean
-
-        if (player == this.playerA) {
-            serverField = event.field
-            isExecutorA = true
-        } else if (player == this.playerB) {
-            serverField = { x: -event.field.x, y: -event.field.y }
-            isExecutorA = false
-        } else return
-
-        const response: TileMoveResponse = { tileId: event.tileId, field: serverField, isMoveByMe: isExecutorA }
-        this.playerA!!.socket.emit("<-move-tile", response)
-
-        response.isMoveByMe = !isExecutorA
-        response.field = { x: -serverField.x, y: -serverField.y }
-        this.playerB!!.socket.emit("<-move-tile", response)
-
-        console.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
     }
 
     addPlayerToRoom(player: Player) {
@@ -44,7 +24,7 @@ export default class GameRoom {
         this.allPlayers.push(player)
         player.socket.join(this.id)
         player.socket.on("disconnect", () => this.removePlayerFromRoom(player))
-        player.socket.on("move-tile", (event: TileMoveEvent) => this.handleTileMove(player, event))
+        player.socket.on("move-tile", (event: TileMoveEvent) => this.game.handleTileMove(player, event))
 
         console.log(`${player.username} joined room ${this.id}`)
     }

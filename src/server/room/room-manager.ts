@@ -1,10 +1,10 @@
 import { JoinRoomEvent } from "../../shared/room-events.js";
 import GameRoom from "./game-room.js";
-import Player from "../player.js";
+import Player from "../objects/player.js";
 import { Socket } from "socket.io";
 
 export namespace RoomManager {
-    const rooms: GameRoom[] = [new GameRoom("abc")]
+    const rooms: GameRoom[] = [new GameRoom("test")]
 
     export function joinRoom(socket: Socket, event: JoinRoomEvent): boolean {
         const target = getRoomById(event.roomId)
