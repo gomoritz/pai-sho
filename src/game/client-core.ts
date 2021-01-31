@@ -5,10 +5,11 @@ import { passChainJumpKey, TileMoveEvent, TileMoveResponse } from "../shared/eve
 import { doTileMove } from "../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
-import { GameStartEvent, gameStartKey, WhoseTurnEvent, whoseTurnKey } from "../shared/events/game-events.js";
+import { GameStartEvent, gameStartKey, ThrowsEvent, throwsKey, WhoseTurnEvent, whoseTurnKey } from "../shared/events/game-events.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setIsMyTurn } from "./logic/whose-turn-is-it.js";
+import { myTiles, opponentTiles } from "../shared/logic/lineup.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
@@ -65,3 +66,13 @@ clientIO.on(whoseTurnKey, (event: WhoseTurnEvent) => {
 export function emitPassChainJump() {
     clientIO.emit(passChainJumpKey)
 }
+
+clientIO.on(throwsKey, (event: ThrowsEvent) => {
+    event.actions.forEach(action => {
+        const isMyVictim = !action.thrower.isMyTile
+        const victimTile = (isMyVictim ? myTiles : opponentTiles).find(it => it.id == action.victim.tile)!!
+
+        victimTile.setThrown()
+        console.log(`${isMyVictim ? "My" : "Opponent"} tile ${victimTile.id} was thrown by ${action.thrower.tile}`)
+    })
+})

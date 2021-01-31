@@ -2,6 +2,7 @@ import Point, { subtract } from "../utils/point.js";
 import Field from "./field.js";
 import GameBoard from "./game-board.js";
 import TileRenderer from "../../game/objects/tile-renderer.js";
+import { myTiles, opponentTiles } from "./lineup.js";
 
 export const size = 42
 
@@ -24,7 +25,14 @@ export abstract class Tile {
         this.isHovered = false
         this.isBeingDragged = false
         this.isClicked = false
+        this.field!!.tile = null
         this.field = null
+
+        if (this.isDark) {
+            opponentTiles.splice(opponentTiles.indexOf(this), 1)
+        } else {
+            myTiles.splice(myTiles.indexOf(this), 1)
+        }
     }
 
     startHover() {

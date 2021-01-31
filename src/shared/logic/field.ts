@@ -75,4 +75,8 @@ export default class Field {
         if (other == null) return false
         return other.x == this.x && other.y == this.y
     }
+
+    serialize(): { x: number, y: number } {
+        return { x: this.x, y: this.y }
+    }
 }
