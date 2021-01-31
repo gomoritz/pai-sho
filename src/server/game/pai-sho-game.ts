@@ -6,7 +6,12 @@ import { buildLineup, myTiles, opponentTiles } from "../../shared/logic/lineup.j
 import { canMoveTileToField, canPerformJump } from "../../shared/logic/tile-moves.js";
 import { LotusTile, Tile } from "../../shared/logic/tiles.js";
 import Field from "../../shared/logic/field.js";
-import { gameStartKey, GameStartEvent, WhoseTurnEvent, whoseTurnKey, ThrowAction, ThrowsEvent, throwsKey } from "../../shared/events/game-events.js";
+import {
+    gameAbandonKey, gameStartKey, GameStartEvent,
+    whoseTurnKey, WhoseTurnEvent,
+    throwsKey, ThrowAction, ThrowsEvent
+} from "../../shared/events/game-events.js";
+import { serverIO } from "../socket.js";
 
 export default class PaiShoGame {
     currentPlayer: Player | null = null
@@ -33,7 +38,12 @@ export default class PaiShoGame {
     }
 
     abandon() {
+        serverIO.to(this.room.id).emit(gameAbandonKey)
 
+        this.room.playerA = null
+        this.room.playerB = null
+        this.room.allPlayers = []
+        this.room.game = new PaiShoGame(this.room)
     }
 
     handleTileMove(player: Player, event: TileMoveEvent) {

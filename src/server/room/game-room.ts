@@ -7,7 +7,7 @@ export default class GameRoom {
     playerB: Player | null = null
     allPlayers: Player[] = []
 
-    readonly game: PaiShoGame = new PaiShoGame(this)
+    game: PaiShoGame = new PaiShoGame(this)
 
     constructor(public id: string) {
     }
@@ -19,7 +19,7 @@ export default class GameRoom {
         } else if (this.playerB == null) {
             this.playerB = player
         } else {
-            throw "The room is already full"
+            return
         }
 
         this.allPlayers.push(player)
@@ -41,7 +41,7 @@ export default class GameRoom {
         } else if (this.playerB == player) {
             this.playerB = null
         } else {
-            throw "The player isn't inside the room"
+            return
         }
 
         this.allPlayers.splice(this.allPlayers.indexOf(player), 1)

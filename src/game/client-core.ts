@@ -5,28 +5,35 @@ import { passChainJumpKey, TileMoveEvent, TileMoveResponse } from "../shared/eve
 import { doTileMove } from "../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
-import { GameStartEvent, gameStartKey, ThrowsEvent, throwsKey, WhoseTurnEvent, whoseTurnKey } from "../shared/events/game-events.js";
+import { gameAbandonKey, GameStartEvent, gameStartKey, ThrowsEvent, throwsKey, WhoseTurnEvent, whoseTurnKey } from "../shared/events/game-events.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setIsMyTurn } from "./logic/whose-turn-is-it.js";
 import { myTiles, opponentTiles } from "../shared/logic/lineup.js";
+import { hideOverlay } from "./utils/overlay.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
+let roomId: string
+let username: string
+
 export function connectToServer() {
     const url = new URL(window.location.href);
-    const roomId = url.searchParams.get("roomId")
-    const username = url.searchParams.get("username")
+    const _roomId = url.searchParams.get("roomId")
+    const _username = url.searchParams.get("username")
 
-    if (roomId == null || username == null) {
+    if (_roomId == null || _username == null) {
         clientIO.disconnect()
         alert("Missing request parameters")
         // TODO: send back to main page
         return
     }
 
-    //window.location.search = ""
-    emitJoinRoom(roomId, username)
+    history.pushState({}, "Pai Sho | Game", "/game/")
+
+    roomId = _roomId
+    username = _username
+    emitJoinRoom(_roomId, _username)
 }
 
 function emitJoinRoom(roomId: string, username: string) {
@@ -57,6 +64,11 @@ clientIO.on("<-move-tile", (event: TileMoveResponse) => {
 clientIO.on(gameStartKey, (event: GameStartEvent) => {
     renderObjects.push(new DebugGameOverview(event))
     setIsMyTurn(event, true)
+    hideOverlay()
+})
+
+clientIO.on(gameAbandonKey, () => {
+    window.location.search = `roomId=${roomId}&username=${username}`
 })
 
 clientIO.on(whoseTurnKey, (event: WhoseTurnEvent) => {

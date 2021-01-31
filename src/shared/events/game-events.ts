@@ -8,6 +8,8 @@ export interface GameStartEvent {
     }
 }
 
+export const gameAbandonKey = "game-abandon"
+
 export const whoseTurnKey = "whose-turn"
 export interface WhoseTurnEvent {
     myTurn: boolean
