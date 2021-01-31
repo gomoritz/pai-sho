@@ -3,6 +3,10 @@ import DebugGameOverview from "../objects/debug-game-overview.js";
 import { draw } from "../game.js";
 import Field from "../../shared/logic/field.js";
 import { gameBoard } from "../logic-core.js";
+import { emitPassChainJump } from "../client-core.js";
+
+const passButton = document.getElementById("pass-chain-jump") as HTMLButtonElement
+passButton.addEventListener("click", () => emitPassChainJump())
 
 let myTurn: boolean | null = null
 
@@ -13,12 +17,17 @@ export function isMyTurn(): boolean {
 }
 
 export function setIsMyTurn(event: WhoseTurnEvent | GameStartEvent, isGameStart: boolean = false) {
-    if (myTurn == event.myTurn && !isGameStart) {
+    if (myTurn == event.myTurn && myTurn && !isGameStart) {
         showPlayAgain()
+
         chainJumps = (event as WhoseTurnEvent).chainJumps!!.map(obj => gameBoard.getField(obj.x, obj.y)!!)
+        passButton.style.opacity = "1"
     } else {
         myTurn = event.myTurn
+
         chainJumps = null
+        passButton.style.opacity = "0"
+
         DebugGameOverview.getInstance().state.myTurn = myTurn
         draw()
     }

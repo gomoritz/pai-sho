@@ -86,14 +86,20 @@ export default class PaiShoGame {
         }
     }
 
+    handlePassChainJump(player: Player) {
+        if (this.currentPlayer == player && this.chainJumps != null) {
+            this.chainJumps = null
+            this.setWhoseTurn(this.getOtherPlayer(player))
+            console.log(`${player.username} passed his chain jump`)
+        }
+    }
+
     canPerformChainJump(originalField: Field, tile: Tile): Field[] | null {
         const wasJump = !(tile instanceof LotusTile) && canPerformJump(originalField, tile.field!!)
         if (!wasJump) return null
 
-        return Object.values(this.gameBoard.fields).filter(field =>
-            canPerformJump(tile.field!!, field) &&
-            !(field.x == originalField.x && field.y == originalField.y)
-        );
+        const fields = Object.values(this.gameBoard.fields).filter(field => canPerformJump(tile.field!!, field));
+        return fields.length == 0 ? null : fields;
     }
 
     setWhoseTurn(nextPlayer: Player, chainJumps?: Field[]) {
@@ -114,5 +120,9 @@ export default class PaiShoGame {
      */
     verifyChainJumps(field: Field): boolean {
         return this.chainJumps == null || this.chainJumps.some(cj => field.equals(cj))
+    }
+
+    getOtherPlayer(p: Player): Player {
+        return p == this.room.playerA ? this.room.playerB!! : this.room.playerA!!
     }
 }

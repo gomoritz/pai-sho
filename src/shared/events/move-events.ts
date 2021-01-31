@@ -6,3 +6,5 @@ export interface TileMoveEvent {
 export interface TileMoveResponse extends TileMoveEvent {
     isMoveByMe: boolean
 }
+
+export const passChainJumpKey = "pass-chain-jump"

@@ -1,7 +1,7 @@
 import { JoinRoomEvent, JoinRoomResponse } from "../shared/events/room-events.js";
 import { Tile } from "../shared/logic/tiles.js";
 import Field from "../shared/logic/field.js";
-import { TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js";
+import { passChainJumpKey, TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js";
 import { doTileMove } from "../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
@@ -61,3 +61,7 @@ clientIO.on(gameStartKey, (event: GameStartEvent) => {
 clientIO.on(whoseTurnKey, (event: WhoseTurnEvent) => {
     setIsMyTurn(event)
 })
+
+export function emitPassChainJump() {
+    clientIO.emit(passChainJumpKey)
+}
