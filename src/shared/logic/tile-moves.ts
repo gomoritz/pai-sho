@@ -3,7 +3,7 @@ import Field from "./field.js";
 import { emitMoveTile } from "../../game/client-core.js";
 import { gameBoard } from "../../game/logic-core.js";
 import { TileMoveResponse } from "../events/move-events.js";
-import { myTiles, opponentTiles } from "../../game/logic/lineup.js";
+import { myTiles, opponentTiles } from "./lineup.js";
 import { draw } from "../../game/game.js";
 import GameBoard from "./game-board.js";
 

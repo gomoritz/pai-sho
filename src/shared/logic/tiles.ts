@@ -1,81 +1,22 @@
-import RenderObject from "../../game/objects/render-object.js";
-import { ctx } from "../../game/game.js";
-import { gameBoardRenderer } from "../../game/render-core.js";
-import Point, { add, subtract } from "../utils/point.js";
+import Point, { subtract } from "../utils/point.js";
 import Field from "./field.js";
-import { gameBoard } from "../../game/logic-core.js";
+import GameBoard from "./game-board.js";
+import TileRenderer from "../../game/objects/tile-renderer.js";
 
 export const size = 42
 
-export abstract class Tile extends RenderObject {
+export abstract class Tile {
     public field: Field | null
     public isThrown = false
 
-    private _isDark: boolean = false
-    private imageElement: HTMLImageElement = document.getElementById(this.imageResource) as HTMLImageElement
+    public renderer: TileRenderer
 
     public isHovered: boolean = false
     public isBeingDragged: boolean = false
     public isClicked: boolean = false;
     public dragPosition: Point | null = null
 
-    protected constructor(private imageResource: string, public id: string) {
-        super();
-    }
-
-    render = () => {
-        if (this.isThrown || this.field == undefined) return
-
-        const renderSize = this.isBeingDragged || this.isClicked ? 45 : size
-        let { x, y } = add(gameBoardRenderer.center, this.field.translateToPoint()!!)
-
-        if (this.isBeingDragged && this.dragPosition != null) {
-            x = this.dragPosition.x
-            y = this.dragPosition.y
-        }
-
-        const cornerX = x - renderSize / 2
-        const cornerY = y - renderSize / 2
-        const shadowOffset = this.isBeingDragged || this.isClicked ? 2 : 1
-
-        ctx.fillStyle = "rgba(0,0,0,.7)"
-        ctx.beginPath()
-        ctx.arc(x + shadowOffset, y + 2 * shadowOffset, renderSize / 2, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.closePath()
-
-        this.renderTileImage(cornerX, cornerY, renderSize)
-
-        if (this.isClicked) {
-            ctx.fillStyle = "rgba(255,255,255,.3)"
-            ctx.beginPath()
-            ctx.arc(x, y, renderSize / 2, 0, Math.PI * 2)
-            ctx.fill()
-            ctx.closePath()
-        } else if (this.isBeingDragged || this.isHovered) {
-            ctx.fillStyle = "rgba(255,255,255,.15)"
-            ctx.beginPath()
-            ctx.arc(x, y, renderSize / 2, 0, Math.PI * 2)
-            ctx.fill()
-            ctx.closePath()
-        }
-    }
-
-    renderTileImage(x: number, y: number, size: number) {
-        ctx.imageSmoothingEnabled = true
-        ctx.imageSmoothingQuality = "high"
-        ctx.drawImage(this.imageElement, x, y, size, size)
-    }
-
-    requiresDefer = () => this.isBeingDragged || this.isClicked
-
-    get isDark() {
-        return this._isDark
-    }
-
-    set isDark(value) {
-        this._isDark = value
-        this.imageElement = document.getElementById(value ? this.imageResource + "__dark" : this.imageResource) as HTMLImageElement
+    protected constructor(public imageResource: string, public id: string, public isDark: boolean) {
     }
 
     setThrown() {
@@ -102,7 +43,7 @@ export abstract class Tile extends RenderObject {
         return diagonal <= size / 2
     }
 
-    atField(x: number, y: number): this {
+    atField(gameBoard: GameBoard, x: number, y: number): this {
         this.field = gameBoard.getField(x, y)!!
         this.field.tile = this
         return this
@@ -112,8 +53,8 @@ export abstract class Tile extends RenderObject {
 }
 
 export class LotusTile extends Tile {
-    constructor(public id: string) {
-        super("lotus", id);
+    constructor(id: string, isDark: boolean) {
+        super("lotus", id, isDark);
     }
 
     canThrow(other: Tile): boolean {
@@ -122,8 +63,8 @@ export class LotusTile extends Tile {
 }
 
 export class AvatarTile extends Tile {
-    constructor(public id: string) {
-        super("avatar", id);
+    constructor(id: string, isDark: boolean) {
+        super("avatar", id, isDark);
     }
 
     canThrow(other: Tile): boolean {
@@ -132,8 +73,8 @@ export class AvatarTile extends Tile {
 }
 
 export class AirTile extends Tile {
-    constructor(public id: string) {
-        super("air", id);
+    constructor(id: string, isDark: boolean) {
+        super("air", id, isDark);
     }
 
     canThrow(other: Tile): boolean {
@@ -142,8 +83,8 @@ export class AirTile extends Tile {
 }
 
 export class EarthTile extends Tile {
-    constructor(public id: string) {
-        super("earth", id);
+    constructor(id: string, isDark: boolean) {
+        super("earth", id, isDark);
     }
 
     canThrow(other: Tile): boolean {
@@ -152,8 +93,8 @@ export class EarthTile extends Tile {
 }
 
 export class FireTile extends Tile {
-    constructor(public id: string) {
-        super("fire", id);
+    constructor(id: string, isDark: boolean) {
+        super("fire", id, isDark);
     }
 
     canThrow(other: Tile): boolean {
@@ -162,8 +103,8 @@ export class FireTile extends Tile {
 }
 
 export class WaterTile extends Tile {
-    constructor(public id: string) {
-        super("water", id);
+    constructor(id: string, isDark: boolean) {
+        super("water", id, isDark);
     }
 
     canThrow(other: Tile): boolean {

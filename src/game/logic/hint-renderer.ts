@@ -17,7 +17,7 @@ export class HintRenderer extends RenderObject {
 
                 ctx.save()
                 ctx.globalAlpha = .4
-                movingTile!!.renderTileImage(pos.x - 20, pos.y - 20, 40)
+                movingTile!!.renderer.renderTileImage(pos.x - 20, pos.y - 20, 40)
                 ctx.restore()
 
                 if (field.x == closestHintField?.x && field.y == closestHintField.y) {

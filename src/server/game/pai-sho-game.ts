@@ -1,11 +1,16 @@
 import GameRoom from "../room/game-room.js";
 import Player from "../objects/player.js";
 import { TileMoveEvent, TileMoveResponse } from "../../shared/events/move-events.js";
+import GameBoard from "../../shared/logic/game-board.js";
+import { buildLineup } from "../../shared/logic/lineup.js";
 
 export default class PaiShoGame {
     currentPlayer: Player | null = null
+    gameBoard = new GameBoard()
 
     constructor(private room: GameRoom) {
+        this.gameBoard.loadFields()
+        buildLineup(this.gameBoard)
     }
 
     handleTileMove(player: Player, event: TileMoveEvent) {
