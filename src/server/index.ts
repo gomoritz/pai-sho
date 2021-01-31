@@ -4,7 +4,7 @@ import { attachSocketServer } from "./socket.js";
 
 const app = express()
 const http = createServer(app)
-const port = 3000
+const port = 1616
 
 app.use("/game", express.static("src/game", { index: "game.html" }))
 app.use("/resources", express.static("resources"))
