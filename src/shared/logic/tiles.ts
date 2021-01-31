@@ -86,7 +86,7 @@ export class AirTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof WaterTile;
+        return other instanceof WaterTile || other instanceof AvatarTile || other instanceof LotusTile;
     }
 }
 
@@ -96,7 +96,7 @@ export class EarthTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof FireTile;
+        return other instanceof FireTile || other instanceof AvatarTile || other instanceof LotusTile;
     }
 }
 
@@ -106,7 +106,7 @@ export class FireTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof AirTile;
+        return other instanceof AirTile || other instanceof AvatarTile || other instanceof LotusTile;
     }
 }
 
@@ -116,6 +116,6 @@ export class WaterTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof EarthTile;
+        return other instanceof EarthTile || other instanceof AvatarTile || other instanceof LotusTile;
     }
 }
