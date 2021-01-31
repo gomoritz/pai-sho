@@ -21,7 +21,8 @@ export function canMoveTileToField(tile: Tile, field: Field): boolean {
     if (field.tile != null) return false
 
     if (!previousField.isNeighbourField(field)) {
-        const isJump = !(tile instanceof LotusTile) && canPerformJump(tile.field!!, field)
+        const isJump = !(tile instanceof LotusTile) // lotus tile cannot jump
+            && canPerformJump(tile.field!!, field)
         if (!isJump) return false
     }
 
@@ -35,7 +36,9 @@ function canPerformJump(origin: Field, target: Field): boolean {
 
     if (distance == 2 || (dx == 2 && dy == 2)) {
         const fieldBetween = origin.getFieldBetween(target)
-        return fieldBetween != null && fieldBetween.tile != null && !fieldBetween.tile.isDark
+        return fieldBetween != null && fieldBetween.tile != null
+            && !fieldBetween.tile.isDark // cannot jump over opponent tiles
+            && !(fieldBetween.tile instanceof LotusTile) // cannot jump over lotus tile
     }
 
     return false
