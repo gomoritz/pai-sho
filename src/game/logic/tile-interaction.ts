@@ -3,18 +3,18 @@
  * the game board.
  */
 
-import { Tile } from "./tiles.js";
+import { Tile } from "../../shared/logic/tiles.js";
 import { canvas, ctx, draw, isDebug } from "../game.js";
 import { gameBoardRenderer, renderObjects } from "../render-core.js";
-import Point, { subtract } from "../shapes/point.js";
+import Point, { subtract } from "../../shared/utils/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "./lineup.js";
-import { canMoveTileToField, tryTileMove } from "./tile-moves.js";
+import { canMoveTileToField, tryTileMove } from "../../shared/logic/tile-moves.js";
 import { cancelEvent } from "../utils/events.js";
-import Field from "./field.js";
+import Field from "../../shared/logic/field.js";
 import { HintRenderer } from "./hint-renderer.js";
 
-let movingMode: "drag" | "click" = "drag"
+let movingMode: "drag" | "click" = "click"
 let mousePosition: Point = { x: 0, y: 0 }
 let closestHintField: Field | null = null
 

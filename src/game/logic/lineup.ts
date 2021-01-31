@@ -1,4 +1,4 @@
-import { AirTile, AvatarTile, EarthTile, FireTile, LotusTile, Tile, WaterTile } from "./tiles.js";
+import { AirTile, AvatarTile, EarthTile, FireTile, LotusTile, Tile, WaterTile } from "../../shared/logic/tiles.js";
 import { renderObjects } from "../render-core.js";
 
 export let myTiles: Tile[] = []

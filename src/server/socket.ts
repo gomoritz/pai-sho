@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { Server as HttpServer } from "http"
-import { JoinRoomEvent } from "../shared/room-events.js";
+import { JoinRoomEvent } from "../shared/events/room-events.js";
 import { RoomManager } from "./room/room-manager.js";
 import joinRoom = RoomManager.joinRoom;
 

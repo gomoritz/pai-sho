@@ -1,8 +1,8 @@
-import { JoinRoomEvent, JoinRoomResponse } from "../shared/room-events.js";
-import { Tile } from "./logic/tiles.js";
-import Field from "./logic/field.js";
-import { TileMoveEvent, TileMoveResponse } from "../shared/move-events.js";
-import { doTileMove } from "./logic/tile-moves.js";
+import { JoinRoomEvent, JoinRoomResponse } from "../shared/events/room-events.js";
+import { Tile } from "../shared/logic/tiles.js";
+import Field from "../shared/logic/field.js";
+import { TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js";
+import { doTileMove } from "../shared/logic/tile-moves.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
@@ -38,7 +38,7 @@ clientIO.on("<-join-room", (event: JoinRoomResponse) => {
 })
 
 export function emitMoveTile(tile: Tile, field: Field) {
-    const event: TileMoveEvent = { tileId: tile.id, field: field }
+    const event: TileMoveEvent = { tileId: tile.id, field: { x: field.x, y: field.y } }
     clientIO.emit("move-tile", event)
 }
 

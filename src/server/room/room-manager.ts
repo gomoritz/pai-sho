@@ -1,4 +1,4 @@
-import { JoinRoomEvent } from "../../shared/room-events.js";
+import { JoinRoomEvent } from "../../shared/events/room-events.js";
 import GameRoom from "./game-room.js";
 import Player from "../objects/player.js";
 import { Socket } from "socket.io";

@@ -1,4 +1,4 @@
-import GameBoard from "./logic/game-board.js";
+import GameBoard from "../shared/logic/game-board.js";
 import { buildLineup } from "./logic/lineup.js";
 import { createHintRenderer, createTileListeners } from "./logic/tile-interaction.js"
 

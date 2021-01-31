@@ -1,6 +1,6 @@
 import { gameBoardRadius, lineGap } from "../utils/dimensions.js";
 import Field from "./field.js";
-import Point, { distanceBetween } from "../shapes/point.js";
+import Point, { distanceBetween } from "../utils/point.js";
 
 export default class GameBoard {
     public fields: { [coordinate: string]: Field }
@@ -26,7 +26,7 @@ export default class GameBoard {
         this.fields = {}
         for (let fieldX = -8; fieldX <= 8; fieldX++) {
             for (let fieldY = -8; fieldY <= 8; fieldY++) {
-                const field = new Field(fieldX, fieldY)
+                const field = new Field(this, fieldX, fieldY)
                 if (field.translateToPoint() == null) continue
                 this.fields[`${fieldX};${fieldY}`] = field
             }

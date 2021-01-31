@@ -1,6 +1,6 @@
 import Player from "../objects/player.js";
 import PaiShoGame from "../game/pai-sho-game.js";
-import { TileMoveEvent } from "../../shared/move-events.js";
+import { TileMoveEvent } from "../../shared/events/move-events.js";
 
 export default class GameRoom {
     playerA: Player | null = null
@@ -15,6 +15,7 @@ export default class GameRoom {
     addPlayerToRoom(player: Player) {
         if (this.playerA == null) {
             this.playerA = player
+            this.game.currentPlayer = player
         } else if (this.playerB == null) {
             this.playerB = player
         } else {

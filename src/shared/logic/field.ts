@@ -1,14 +1,12 @@
-import { gameBoard } from "../logic-core.js";
-import { ctx } from "../game.js";
-import { gameBoardRenderer } from "../render-core.js";
 import { Direction } from "./direction.js";
-import Point from "../shapes/point.js";
+import Point from "../utils/point.js";
 import { Tile } from "./tiles.js";
+import GameBoard from "./game-board.js";
 
 export default class Field {
     public tile: Tile | null = null
 
-    constructor(public x: number, public y: number) {
+    constructor(private gameBoard: GameBoard, public x: number, public y: number) {
     }
 
     /**
@@ -16,7 +14,7 @@ export default class Field {
      * Returns null if the field doesn't exist because it is outside of the game board.
      */
     translateToPoint(): Point | null {
-        return gameBoard.getRealCoordinatesRelativeToCenter(this.x, this.y)
+        return this.gameBoard.getRealCoordinatesRelativeToCenter(this.x, this.y)
     }
 
     toString(): string {
@@ -26,21 +24,21 @@ export default class Field {
     getRelativeField(direction: Direction, distance: number = 1): Field | null {
         switch (direction) {
             case Direction.TOP:
-                return gameBoard.getField(this.x + distance, this.y + distance)
+                return this.gameBoard.getField(this.x + distance, this.y + distance)
             case Direction.TOP_RIGHT:
-                return gameBoard.getField(this.x + distance, this.y)
+                return this.gameBoard.getField(this.x + distance, this.y)
             case Direction.RIGHT:
-                return gameBoard.getField(this.x + distance, this.y - distance)
+                return this.gameBoard.getField(this.x + distance, this.y - distance)
             case Direction.BOTTOM_RIGHT:
-                return gameBoard.getField(this.x, this.y - distance)
+                return this.gameBoard.getField(this.x, this.y - distance)
             case Direction.BOTTOM:
-                return gameBoard.getField(this.x - distance, this.y - distance)
+                return this.gameBoard.getField(this.x - distance, this.y - distance)
             case Direction.BOTTOM_LEFT:
-                return gameBoard.getField(this.x - distance, this.y)
+                return this.gameBoard.getField(this.x - distance, this.y)
             case Direction.LEFT:
-                return gameBoard.getField(this.x - distance, this.y + distance)
+                return this.gameBoard.getField(this.x - distance, this.y + distance)
             case Direction.TOP_LEFT:
-                return gameBoard.getField(this.x, this.y + distance)
+                return this.gameBoard.getField(this.x, this.y + distance)
         }
         return null
     }
@@ -64,27 +62,12 @@ export default class Field {
             this.getRelativeField(Direction.BOTTOM_RIGHT),
             this.getRelativeField(Direction.BOTTOM),
             this.getRelativeField(Direction.BOTTOM_LEFT),
-            this.getRelativeField(Direction.LEFT),
+            this.getRelativeField( Direction.LEFT),
             this.getRelativeField(Direction.TOP_LEFT),
         ].filter(it => it != null).map(it => it!!)
     }
 
     getFieldBetween(other: Field): Field | null {
-        return gameBoard.getField(this.x - (this.x - other.x) / 2, this.y - (this.y - other.y) / 2)
-    }
-
-    highlight() {
-        const { x, y } = this.translateToPoint()!!
-        const center = gameBoardRenderer.center
-
-        ctx.fillStyle = "#FF0000"
-        ctx.strokeStyle = "#000"
-        ctx.lineWidth = 2
-
-        ctx.beginPath()
-        ctx.arc(center.x + x, center.y + y, 20, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.stroke()
-        ctx.closePath()
+        return this.gameBoard.getField(this.x - (this.x - other.x) / 2, this.y - (this.y - other.y) / 2)
     }
 }

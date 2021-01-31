@@ -1,21 +1,29 @@
 import GameRoom from "../room/game-room.js";
 import Player from "../objects/player.js";
-import { TileMoveEvent, TileMoveResponse } from "../../shared/move-events.js";
+import { TileMoveEvent, TileMoveResponse } from "../../shared/events/move-events.js";
 
 export default class PaiShoGame {
+    currentPlayer: Player | null = null
+
     constructor(private room: GameRoom) {
     }
 
     handleTileMove(player: Player, event: TileMoveEvent) {
+        if (player != this.currentPlayer) {
+            return
+        }
+
         let serverField: { x: number, y: number }
         let isExecutorA: boolean
 
         if (player == this.room.playerA) {
             serverField = event.field
             isExecutorA = true
+            this.currentPlayer = this.room.playerB
         } else if (player == this.room.playerB) {
             serverField = { x: -event.field.x, y: -event.field.y }
             isExecutorA = false
+            this.currentPlayer = this.room.playerA
         } else return
 
         const response: TileMoveResponse = { tileId: event.tileId, field: serverField, isMoveByMe: isExecutorA }

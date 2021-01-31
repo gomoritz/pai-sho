@@ -1,9 +1,9 @@
-import RenderObject from "../objects/render-object.js";
-import { ctx } from "../game.js";
-import { gameBoardRenderer } from "../render-core.js";
-import Point, { add, subtract } from "../shapes/point.js";
+import RenderObject from "../../game/objects/render-object.js";
+import { ctx } from "../../game/game.js";
+import { gameBoardRenderer } from "../../game/render-core.js";
+import Point, { add, subtract } from "../utils/point.js";
 import Field from "./field.js";
-import { gameBoard } from "../logic-core.js";
+import { gameBoard } from "../../game/logic-core.js";
 
 export const size = 42
 

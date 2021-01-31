@@ -1,7 +1,7 @@
 import RenderObject from "../objects/render-object.js";
 import { gameBoard } from "../logic-core.js";
-import { canMoveTileToField } from "./tile-moves.js";
-import { add } from "../shapes/point.js";
+import { canMoveTileToField } from "../../shared/logic/tile-moves.js";
+import { add } from "../../shared/utils/point.js";
 import { gameBoardRenderer } from "../render-core.js";
 import { ctx } from "../game.js";
 import { closestHintField, movingTile } from "./tile-interaction.js";

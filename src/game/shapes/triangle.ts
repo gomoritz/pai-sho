@@ -1,5 +1,5 @@
 import { ctx } from "../game.js";
-import Point from "./point.js";
+import Point from "../../shared/utils/point.js";
 
 export function drawTriangle(pos1: Point, pos2: Point, pos3: Point, color: string) {
     ctx.fillStyle = color
