@@ -29,7 +29,7 @@ export function canMoveTileToField(tile: Tile, field: Field): boolean {
     return true
 }
 
-function canPerformJump(origin: Field, target: Field): boolean {
+export function canPerformJump(origin: Field, target: Field): boolean {
     const dx = Math.abs(origin.x - target.x);
     const dy = Math.abs(origin.y - target.y);
     const distance = dx + dy
