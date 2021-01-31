@@ -9,10 +9,11 @@ import { gameBoardRenderer, renderObjects } from "../render-core.js";
 import Point, { subtract } from "../../shared/utils/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "../../shared/logic/lineup.js";
-import { canMoveTileToField, tryTileMove } from "../../shared/logic/tile-moves.js";
+import { canMoveTileToField } from "../../shared/logic/tile-moves.js";
 import { cancelEvent } from "../utils/events.js";
 import Field from "../../shared/logic/field.js";
 import { HintRenderer } from "./hint-renderer.js";
+import { emitMoveTile } from "../client-core.js";
 
 let movingMode: "drag" | "click" = "click"
 let mousePosition: Point = { x: 0, y: 0 }
@@ -157,6 +158,12 @@ function handleMouseClick(event: MouseEvent) {
         clearClickedTile()
         draw()
     }
+}
+
+export function tryTileMove(tile: Tile, field: Field) {
+    if (!canMoveTileToField(tile, field)) return
+
+    emitMoveTile(tile, field)
 }
 
 function setHoveredTile(newTile: Tile) {

@@ -3,6 +3,8 @@ import { Tile } from "../shared/logic/tiles.js";
 import Field from "../shared/logic/field.js";
 import { TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js";
 import { doTileMove } from "../shared/logic/tile-moves.js";
+import { gameBoard } from "./logic-core.js";
+import { draw } from "./game.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
@@ -43,5 +45,6 @@ export function emitMoveTile(tile: Tile, field: Field) {
 }
 
 clientIO.on("<-move-tile", (event: TileMoveResponse) => {
-    doTileMove(event)
+    doTileMove(gameBoard, event)
+    draw()
 })
