@@ -5,6 +5,10 @@ import { TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js
 import { doTileMove } from "../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
+import { GameStartEvent, gameStartKey, WhoseTurnEvent, whoseTurnKey } from "../shared/events/game-events.js";
+import { renderObjects } from "./render-core.js";
+import DebugGameOverview from "./objects/debug-game-overview.js";
+import { setIsMyTurn } from "./logic/whose-turn-is-it.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
@@ -47,4 +51,13 @@ export function emitMoveTile(tile: Tile, field: Field) {
 clientIO.on("<-move-tile", (event: TileMoveResponse) => {
     doTileMove(gameBoard, event)
     draw()
+})
+
+clientIO.on(gameStartKey, (event: GameStartEvent) => {
+    renderObjects.push(new DebugGameOverview(event))
+    setIsMyTurn(event, true)
+})
+
+clientIO.on(whoseTurnKey, (event: WhoseTurnEvent) => {
+    setIsMyTurn(event)
 })

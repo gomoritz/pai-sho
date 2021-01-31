@@ -6,14 +6,34 @@ import { buildLineup, myTiles, opponentTiles } from "../../shared/logic/lineup.j
 import { canMoveTileToField, canPerformJump } from "../../shared/logic/tile-moves.js";
 import { LotusTile, Tile } from "../../shared/logic/tiles.js";
 import Field from "../../shared/logic/field.js";
+import { gameStartKey, GameStartEvent, WhoseTurnEvent, whoseTurnKey } from "../../shared/events/game-events.js";
 
 export default class PaiShoGame {
     currentPlayer: Player | null = null
     gameBoard = new GameBoard()
+    chainJumps: Field[] | null
 
     constructor(private room: GameRoom) {
         this.gameBoard.loadFields()
         buildLineup(this.gameBoard)
+    }
+
+    start() {
+        this.room.allPlayers.forEach(player => {
+            const event: GameStartEvent = {
+                role: player == this.room.playerA ? "a" : "b",
+                myTurn: player == this.room.playerA,
+                players: {
+                    a: this.room.playerA!!.username,
+                    b: this.room.playerB!!.username
+                }
+            }
+            player.socket.emit(gameStartKey, event)
+        })
+    }
+
+    abandon() {
+
     }
 
     handleTileMove(player: Player, event: TileMoveEvent) {
@@ -39,7 +59,7 @@ export default class PaiShoGame {
         const field = this.gameBoard.getField(serverField.x, serverField.y)
         const tile = (isExecutorA ? myTiles : opponentTiles).find(it => it.id == event.tileId)
 
-        if (field == null || tile == null || !canMoveTileToField(tile, field)) {
+        if (field == null || tile == null || !canMoveTileToField(tile, field) || !this.verifyChainJumps(field)) {
             return console.log("error invalid tile move");
         }
 
@@ -57,11 +77,12 @@ export default class PaiShoGame {
 
         console.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
 
-        const chainJumps = this.canPerformChainJump(originalField, tile)
-        if (chainJumps != null) {
+        this.chainJumps = this.canPerformChainJump(originalField, tile)
+        if (this.chainJumps != null) {
             console.log(`${player.username} can perform a chain jump`)
+            this.setWhoseTurn(player, this.chainJumps)
         } else {
-            this.currentPlayer = nextPlayer
+            this.setWhoseTurn(nextPlayer)
         }
     }
 
@@ -73,5 +94,25 @@ export default class PaiShoGame {
             canPerformJump(tile.field!!, field) &&
             !(field.x == originalField.x && field.y == originalField.y)
         );
+    }
+
+    setWhoseTurn(nextPlayer: Player, chainJumps?: Field[]) {
+        this.currentPlayer = nextPlayer
+        this.room.allPlayers.forEach(player => {
+            const event: WhoseTurnEvent = { myTurn: player == nextPlayer }
+            if (event.myTurn && chainJumps != undefined) {
+                event.chainJumps = chainJumps.map(f => ({ x: f.x, y: f.y }))
+            }
+            player.socket.emit(whoseTurnKey, event)
+        })
+    }
+
+    /**
+     * If the player is allowed to perform a chain-jump, this function makes sure that
+     * the given field is a potential target of such a chain-jump. If no chain-jumps
+     * are available, this function returns true for all fields.
+     */
+    verifyChainJumps(field: Field): boolean {
+        return this.chainJumps == null || this.chainJumps.some(cj => field.equals(cj))
     }
 }

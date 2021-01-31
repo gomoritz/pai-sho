@@ -70,4 +70,9 @@ export default class Field {
     getFieldBetween(other: Field): Field | null {
         return this.gameBoard.getField(this.x - (this.x - other.x) / 2, this.y - (this.y - other.y) / 2)
     }
+
+    equals(other: Field | null): boolean {
+        if (other == null) return false
+        return other.x == this.x && other.y == this.y
+    }
 }

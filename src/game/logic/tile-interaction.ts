@@ -12,8 +12,9 @@ import { myTiles } from "../../shared/logic/lineup.js";
 import { canMoveTileToField } from "../../shared/logic/tile-moves.js";
 import { cancelEvent } from "../utils/events.js";
 import Field from "../../shared/logic/field.js";
-import { HintRenderer } from "./hint-renderer.js";
+import { HintRenderer } from "../objects/hint-renderer.js";
 import { emitMoveTile } from "../client-core.js";
+import { isMyTurn, verifyChainJumps } from "./whose-turn-is-it.js";
 
 let movingMode: "drag" | "click" = "click"
 let mousePosition: Point = { x: 0, y: 0 }
@@ -66,7 +67,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
         const relPos = subtract(absPos, gameBoardRenderer.center)
 
         closestHintField = gameBoard.getClosestField(relPos)
-        if (closestHintField && !canMoveTileToField(movingTile!!, closestHintField))
+        if (closestHintField && (!canMoveTileToField(movingTile!!, closestHintField) || !verifyChainJumps(closestHintField)))
             closestHintField = null
 
         if (movingMode == "drag") {
@@ -84,7 +85,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
         const relativePoint = subtract(point, gameBoardRenderer.center)
         const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
 
-        if (hovered === undefined) {
+        if (hovered === undefined || !isMyTurn()) {
             canvas.style.cursor = "default"
             if (hoveredTile != null) {
                 clearHoveredTile()
@@ -112,6 +113,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
 
 function handleInteractionStart(event: MouseEvent | TouchEvent) {
     if ("button" in event && event.button != 0) return
+    if (!isMyTurn()) return
 
     const point = parseTouchOrMouse(event)
     const relativePoint = subtract(point, gameBoardRenderer.center)
@@ -141,6 +143,7 @@ function handleInteractionEnd(event: MouseEvent) {
 
 function handleMouseClick(event: MouseEvent) {
     if (event.button != 0) return
+    if (!isMyTurn()) return
 
     if (movingTile == null) {
         if (hoveredTile != null) {
@@ -161,7 +164,7 @@ function handleMouseClick(event: MouseEvent) {
 }
 
 export function tryTileMove(tile: Tile, field: Field) {
-    if (!canMoveTileToField(tile, field)) return
+    if (!canMoveTileToField(tile, field) || !verifyChainJumps(field)) return
 
     emitMoveTile(tile, field)
 }

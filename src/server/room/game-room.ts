@@ -28,6 +28,10 @@ export default class GameRoom {
         player.socket.on("move-tile", (event: TileMoveEvent) => this.game.handleTileMove(player, event))
 
         console.log(`${player.username} joined room ${this.id}`)
+
+        if (this.allPlayers.length == 2) {
+            this.game.start()
+        }
     }
 
     removePlayerFromRoom(player: Player) {
@@ -43,6 +47,10 @@ export default class GameRoom {
         player.socket.leave(this.id)
 
         console.log(`${player.username} left room ${this.id}`)
+
+        if (this.allPlayers.length == 1) {
+            this.game.abandon()
+        }
     }
 
     isFull(): boolean {
