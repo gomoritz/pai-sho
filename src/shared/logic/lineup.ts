@@ -1,8 +1,12 @@
 import { AirTile, AvatarTile, EarthTile, FireTile, LotusTile, Tile, WaterTile } from "./tiles.js";
 import GameBoard from "./game-board.js";
+import { RespawnAvatarPacket } from "../events/respawn-avatar.js";
 
 export let myTiles: Tile[] = []
 export let opponentTiles: Tile[] = []
+
+export let myAvatar: AvatarTile
+export let opponentAvatar: AvatarTile
 
 export function buildLineup(gameBoard: GameBoard): Tile[] {
     placeTilesFor("me", gameBoard)
@@ -10,9 +14,23 @@ export function buildLineup(gameBoard: GameBoard): Tile[] {
     return myTiles.concat(opponentTiles)
 }
 
+export function respawnAvatar(gameBoard: GameBoard, packet: RespawnAvatarPacket) {
+    if (packet.myAvatar) {
+        myAvatar.isThrown = false
+        myAvatar.atField(gameBoard, 4, 4)
+        myTiles.push(myAvatar)
+    } else {
+        opponentAvatar.isThrown = false
+        opponentAvatar.atField(gameBoard, -4, -4)
+        opponentTiles.push(opponentAvatar)
+    }
+}
+
 function placeTilesFor(player: "me" | "opponent", gameBoard: GameBoard) {
     const isOpponent = player === "opponent"
     const n = isOpponent ? -1 : 1
+    const avatar = new AvatarTile("avatar", isOpponent).atField(gameBoard, 4 * n, 4 * n);
+
     const tiles: Tile[] = [
         new LotusTile("lotus", isOpponent).atField(gameBoard, 6 * n, 6 * n),
 
@@ -30,12 +48,14 @@ function placeTilesFor(player: "me" | "opponent", gameBoard: GameBoard) {
         new EarthTile("earth-3", isOpponent).atField(gameBoard, 5 * n, 2 * n),
         new FireTile("fire-3", isOpponent).atField(gameBoard, 7 * n, 1 * n),
 
-        new AvatarTile("avatar", isOpponent).atField(gameBoard, 4 * n, 4 * n)
+        avatar
     ]
 
     if (isOpponent) {
         opponentTiles = tiles
+        opponentAvatar = avatar
     } else {
         myTiles = tiles
+        myAvatar = avatar
     }
 }

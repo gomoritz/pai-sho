@@ -1,7 +1,7 @@
 import GameRoom from "../room/game-room.js";
 import Player from "../objects/player.js";
 import GameBoard from "../../shared/logic/game-board.js";
-import { buildLineup, myTiles, opponentTiles } from "../../shared/logic/lineup.js";
+import { buildLineup, myTiles, opponentTiles, respawnAvatar } from "../../shared/logic/lineup.js";
 import { canMoveTileToField, canPerformJump } from "../../shared/logic/tile-moves.js";
 import { LotusTile, Tile } from "../../shared/logic/tiles.js";
 import Field from "../../shared/logic/field.js";
@@ -13,6 +13,7 @@ import { WhoseTurnPacket, WhoseTurnEvent } from "../../shared/events/whose-turn.
 import { ThrownTile, ThrowTilesPacket, ThrowTilesEvent } from "../../shared/events/throw-tiles.js";
 import { TileMovePacket, TileMoveResponsePacket, TileMoveResponseEvent } from "../../shared/events/tile-move.js";
 import { InCheckPacket, InCheckEvent } from "../../shared/events/in-check.js";
+import { RespawnAvatarEvent, RespawnAvatarPacket } from "../../shared/events/respawn-avatar.js";
 
 export default class PaiShoGame {
     currentPlayer: Player | null = null
@@ -20,9 +21,6 @@ export default class PaiShoGame {
 
     chainJumps: Field[] | null
     tileWhichChainJumps: Tile | null
-
-    aInCheck: boolean = false
-    bInCheck: boolean = false
 
     constructor(private room: GameRoom) {
         this.gameBoard.loadFields()
@@ -161,8 +159,15 @@ export default class PaiShoGame {
             otherPlayer.socket.emit(ThrowTilesEvent, event)
 
             totalThrows.forEach(action => {
-                const performer = action.thrower.isMyTile ? this.currentPlayer : otherPlayer;
+                // revert inversion
+                const performer = !action.thrower.isMyTile ? this.currentPlayer : otherPlayer;
                 console.log(`${performer!!.username} threw ${action.victim.tile} with ${action.thrower.tile}`)
+
+                if (action.victim.tile == "avatar") {
+                    const other = this.getOtherPlayer(performer!!);
+                    console.log(`${other.username} has lost his avatar`)
+                    other.lostAvatar = true
+                }
             })
         }
 
@@ -176,15 +181,15 @@ export default class PaiShoGame {
         const nowA = lotusA.isInCheck()
         const nowB = lotusB.isInCheck()
 
-        if (this.aInCheck != nowA) {
+        if (this.room.playerA!!.inCheck != nowA) {
             this.room.playerA!!.socket.emit(InCheckEvent, { inCheck: nowA } as InCheckPacket)
         }
-        if (this.bInCheck != nowB) {
+        if (this.room.playerB!!.inCheck != nowB) {
             this.room.playerB!!.socket.emit(InCheckEvent, { inCheck: nowB } as InCheckPacket)
         }
 
-        this.aInCheck = lotusA.isInCheck()
-        this.bInCheck = lotusB.isInCheck()
+        this.room.playerA!!.inCheck = lotusA.isInCheck()
+        this.room.playerB!!.inCheck = lotusB.isInCheck()
     }
 
     checkForGameEnd(): boolean {
@@ -230,6 +235,21 @@ export default class PaiShoGame {
             }
             player.socket.emit(WhoseTurnEvent, event)
         })
+
+        if (nextPlayer.lostAvatar) {
+            const n = nextPlayer == this.room.playerA ? 1 : -1
+            const avatarField = this.gameBoard.getField(4 * n, 4 * n)!!
+
+            if (avatarField.tile == null) {
+                console.log(`Respawned ${nextPlayer.username}'s avatar`)
+                respawnAvatar(this.gameBoard, { myAvatar: this.room.playerA == nextPlayer })
+                nextPlayer.lostAvatar = false
+
+                this.room.allPlayers.forEach(player => {
+                    player.socket.emit(RespawnAvatarEvent, { myAvatar: player == nextPlayer } as RespawnAvatarPacket)
+                })
+            }
+        }
     }
 
     /**

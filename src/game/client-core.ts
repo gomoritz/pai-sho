@@ -6,7 +6,7 @@ import { draw } from "./game.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
-import { myTiles, opponentTiles } from "../shared/logic/lineup.js";
+import { myTiles, opponentTiles, respawnAvatar } from "../shared/logic/lineup.js";
 import { hideOverlay, showOverlay } from "./utils/overlay.js";
 import { GameStartPacket, GameStartEvent } from "../shared/events/game-start.js";
 import { GameAbandonEvent } from "../shared/events/game-abandon.js";
@@ -17,6 +17,7 @@ import { TileMovePacket, TileMoveEvent, TileMoveResponsePacket, TileMoveResponse
 import { PassChainJumpEvent } from "../shared/events/pass-chain-jump.js";
 import { InCheckPacket, InCheckEvent } from "../shared/events/in-check.js";
 import { JoinRoomPacket, JoinRoomResponsePacket } from "../shared/events/join-room.js";
+import { RespawnAvatarEvent, RespawnAvatarPacket } from "../shared/events/respawn-avatar.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
@@ -105,4 +106,9 @@ clientIO.on(ThrowTilesEvent, (packet: ThrowTilesPacket) => {
         victimTile.setThrown()
         console.log(`${isMyVictim ? "My" : "Opponent"} tile ${victimTile.id} was thrown by ${action.thrower.tile}`)
     })
+})
+
+clientIO.on(RespawnAvatarEvent, (packet: RespawnAvatarPacket) => {
+    respawnAvatar(gameBoard, packet)
+    draw()
 })
