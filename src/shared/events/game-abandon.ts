@@ -1,0 +1,1 @@
+export const GameAbandonEvent = "game-abandon"

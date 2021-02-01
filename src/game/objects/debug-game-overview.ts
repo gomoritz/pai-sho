@@ -1,6 +1,6 @@
 import RenderObject from "./render-object.js";
-import { GameStartEvent } from "../../shared/events/game-events.js";
 import { ctx } from "../game.js";
+import { GameStartPacket } from "../../shared/events/game-start.js";
 
 export default class DebugGameOverview extends RenderObject {
     private static instance: DebugGameOverview
@@ -9,7 +9,7 @@ export default class DebugGameOverview extends RenderObject {
         return this.instance
     }
 
-    constructor(public state: GameStartEvent) {
+    constructor(public state: GameStartPacket) {
         super();
         DebugGameOverview.instance = this
     }

@@ -1,25 +1,22 @@
-import { JoinRoomEvent, JoinRoomResponse } from "../shared/events/room-events.js";
 import { Tile } from "../shared/logic/tiles.js";
 import Field from "../shared/logic/field.js";
-import { CheckStatusEvent, checkStatusKey, passChainJumpKey, TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js";
 import { doTileMove } from "../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
-import {
-    gameAbandonKey, GameEndEvent,
-    gameEndKey,
-    GameStartEvent,
-    gameStartKey,
-    ThrowsEvent,
-    throwsKey,
-    WhoseTurnEvent,
-    whoseTurnKey
-} from "../shared/events/game-events.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
 import { myTiles, opponentTiles } from "../shared/logic/lineup.js";
 import { hideOverlay, showOverlay } from "./utils/overlay.js";
+import { GameStartPacket, GameStartEvent } from "../shared/events/game-start.js";
+import { GameAbandonEvent } from "../shared/events/game-abandon.js";
+import { GameEndPacket, GameEndEvent } from "../shared/events/game-end.js";
+import { WhoseTurnPacket, WhoseTurnEvent } from "../shared/events/whose-turn.js";
+import { ThrowTilesPacket, ThrowTilesEvent } from "../shared/events/throw-tiles.js";
+import { TileMovePacket, TileMoveEvent, TileMoveResponsePacket, TileMoveResponseEvent } from "../shared/events/tile-move.js";
+import { PassChainJumpEvent } from "../shared/events/pass-chain-jump.js";
+import { InCheckPacket, InCheckEvent } from "../shared/events/in-check.js";
+import { JoinRoomPacket, JoinRoomResponsePacket } from "../shared/events/join-room.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
@@ -46,12 +43,12 @@ export function connectToServer() {
 }
 
 function emitJoinRoom(roomId: string, username: string) {
-    const event: JoinRoomEvent = { roomId, username };
+    const event: JoinRoomPacket = { roomId, username };
     clientIO.emit("join-room", event)
 }
 
-clientIO.on("<-join-room", (event: JoinRoomResponse) => {
-    if (event.success) {
+clientIO.on("<-join-room", (packet: JoinRoomResponsePacket) => {
+    if (packet.success) {
 
     } else {
         clientIO.disconnect()
@@ -61,26 +58,26 @@ clientIO.on("<-join-room", (event: JoinRoomResponse) => {
 })
 
 export function emitMoveTile(tile: Tile, field: Field) {
-    const event: TileMoveEvent = { tileId: tile.id, field: { x: field.x, y: field.y } }
-    clientIO.emit("move-tile", event)
+    const event: TileMovePacket = { tileId: tile.id, field: { x: field.x, y: field.y } }
+    clientIO.emit(TileMoveEvent, event)
 }
 
-clientIO.on("<-move-tile", (event: TileMoveResponse) => {
-    doTileMove(gameBoard, event)
+clientIO.on(TileMoveResponseEvent, (packet: TileMoveResponsePacket) => {
+    doTileMove(gameBoard, packet)
     draw()
 })
 
-clientIO.on(gameStartKey, (event: GameStartEvent) => {
-    renderObjects.push(new DebugGameOverview(event))
-    setIsMyTurn(event, true)
+clientIO.on(GameStartEvent, (packet: GameStartPacket) => {
+    renderObjects.push(new DebugGameOverview(packet))
+    setIsMyTurn(packet, true)
     hideOverlay()
 })
 
-clientIO.on(gameEndKey, (event: GameEndEvent) => {
-    showOverlay(`You ${event.win ? "won" : "lost"}!`)
+clientIO.on(GameEndEvent, (packet: GameEndPacket) => {
+    showOverlay(`You ${packet.win ? "won" : "lost"}!`)
 })
 
-clientIO.on(gameAbandonKey, () => {
+clientIO.on(GameAbandonEvent, () => {
     window.location.search = `roomId=${roomId}&username=${username}`
 })
 
@@ -88,20 +85,20 @@ clientIO.on("disconnect", () => {
     window.location.search = `roomId=${roomId}&username=${username}`
 })
 
-clientIO.on(whoseTurnKey, (event: WhoseTurnEvent) => {
-    setIsMyTurn(event)
+clientIO.on(WhoseTurnEvent, (packet: WhoseTurnPacket) => {
+    setIsMyTurn(packet)
 })
 
-clientIO.on(checkStatusKey, (event: CheckStatusEvent) => {
-    setInCheck(event)
+clientIO.on(InCheckEvent, (packet: InCheckPacket) => {
+    setInCheck(packet)
 })
 
 export function emitPassChainJump() {
-    clientIO.emit(passChainJumpKey)
+    clientIO.emit(PassChainJumpEvent)
 }
 
-clientIO.on(throwsKey, (event: ThrowsEvent) => {
-    event.actions.forEach(action => {
+clientIO.on(ThrowTilesEvent, (packet: ThrowTilesPacket) => {
+    packet.actions.forEach(action => {
         const isMyVictim = !action.thrower.isMyTile
         const victimTile = (isMyVictim ? myTiles : opponentTiles).find(it => it.id == action.victim.tile)!!
 

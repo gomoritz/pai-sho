@@ -1,11 +1,12 @@
-import { GameStartEvent, WhoseTurnEvent } from "../../shared/events/game-events.js";
 import DebugGameOverview from "../objects/debug-game-overview.js";
 import { draw } from "../game.js";
 import Field from "../../shared/logic/field.js";
 import { gameBoard } from "../logic-core.js";
 import { emitPassChainJump } from "../client-core.js";
-import { CheckStatusEvent } from "../../shared/events/move-events.js";
 import { LotusTile, Tile } from "../../shared/logic/tiles.js";
+import { GameStartPacket } from "../../shared/events/game-start.js";
+import { WhoseTurnPacket } from "../../shared/events/whose-turn.js";
+import { InCheckPacket } from "../../shared/events/in-check.js";
 
 const passButton = document.getElementById("pass-chain-jump") as HTMLButtonElement
 passButton.addEventListener("click", () => emitPassChainJump())
@@ -24,16 +25,16 @@ export function isInCheck(): boolean {
     return inCheck
 }
 
-export function setIsMyTurn(event: WhoseTurnEvent | GameStartEvent, isGameStart: boolean = false) {
-    if (myTurn == event.myTurn && myTurn && !isGameStart) {
-        const wte = event as WhoseTurnEvent;
+export function setIsMyTurn(packet: WhoseTurnPacket | GameStartPacket, isGameStart: boolean = false) {
+    if (myTurn == packet.myTurn && myTurn && !isGameStart) {
+        const wte = packet as WhoseTurnPacket;
         showPlayAgain()
 
         chainJumps = wte.chainJumps!!.map(obj => gameBoard.getField(obj.x, obj.y)!!)
         tileWhichChainJumps = wte.tileWhichChainJumps!!
         passButton.style.opacity = "1"
     } else {
-        myTurn = event.myTurn
+        myTurn = packet.myTurn
 
         chainJumps = null
         tileWhichChainJumps = null
@@ -44,8 +45,8 @@ export function setIsMyTurn(event: WhoseTurnEvent | GameStartEvent, isGameStart:
     }
 }
 
-export function setInCheck(event: CheckStatusEvent) {
-    inCheck = event.inCheck
+export function setInCheck(packet: InCheckPacket) {
+    inCheck = packet.inCheck
 }
 
 export function verify(tile: Tile, field: Field): boolean {

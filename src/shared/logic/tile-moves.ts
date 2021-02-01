@@ -1,10 +1,10 @@
 import { LotusTile, Tile } from "./tiles.js";
 import Field from "./field.js";
-import { TileMoveResponse } from "../events/move-events.js";
 import { myTiles, opponentTiles } from "./lineup.js";
 import GameBoard from "./game-board.js";
+import { TileMoveResponsePacket } from "../events/tile-move.js";
 
-export function doTileMove(gameBoard: GameBoard, event: TileMoveResponse) {
+export function doTileMove(gameBoard: GameBoard, event: TileMoveResponsePacket) {
     const tile = (event.isMoveByMe ? myTiles : opponentTiles).find(it => it.id == event.tileId)
     const field = gameBoard.getField(event.field.x, event.field.y)
     if (tile == null || field == null) return

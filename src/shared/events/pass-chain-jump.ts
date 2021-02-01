@@ -1,0 +1,1 @@
+export const PassChainJumpEvent = "pass-chain-jump"

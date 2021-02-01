@@ -1,17 +1,18 @@
 import GameRoom from "../room/game-room.js";
 import Player from "../objects/player.js";
-import { CheckStatusEvent, checkStatusKey, TileMoveEvent, TileMoveResponse } from "../../shared/events/move-events.js";
 import GameBoard from "../../shared/logic/game-board.js";
 import { buildLineup, myTiles, opponentTiles } from "../../shared/logic/lineup.js";
 import { canMoveTileToField, canPerformJump } from "../../shared/logic/tile-moves.js";
 import { LotusTile, Tile } from "../../shared/logic/tiles.js";
 import Field from "../../shared/logic/field.js";
-import {
-    gameAbandonKey, gameStartKey, GameStartEvent,
-    whoseTurnKey, WhoseTurnEvent,
-    throwsKey, ThrowAction, ThrowsEvent, gameEndKey, GameEndEvent
-} from "../../shared/events/game-events.js";
 import { serverIO } from "../socket.js";
+import { GameStartPacket, GameStartEvent } from "../../shared/events/game-start.js";
+import { GameAbandonEvent } from "../../shared/events/game-abandon.js";
+import { GameEndPacket, GameEndEvent } from "../../shared/events/game-end.js";
+import { WhoseTurnPacket, WhoseTurnEvent } from "../../shared/events/whose-turn.js";
+import { ThrownTile, ThrowTilesPacket, ThrowTilesEvent } from "../../shared/events/throw-tiles.js";
+import { TileMovePacket, TileMoveResponsePacket, TileMoveResponseEvent } from "../../shared/events/tile-move.js";
+import { InCheckPacket, InCheckEvent } from "../../shared/events/in-check.js";
 
 export default class PaiShoGame {
     currentPlayer: Player | null = null
@@ -30,7 +31,7 @@ export default class PaiShoGame {
 
     start() {
         this.room.allPlayers.forEach(player => {
-            const event: GameStartEvent = {
+            const event: GameStartPacket = {
                 role: player == this.room.playerA ? "a" : "b",
                 myTurn: player == this.room.playerA,
                 players: {
@@ -38,12 +39,12 @@ export default class PaiShoGame {
                     b: this.room.playerB!!.username
                 }
             }
-            player.socket.emit(gameStartKey, event)
+            player.socket.emit(GameStartEvent, event)
         })
     }
 
     abandon() {
-        serverIO.to(this.room.id).emit(gameAbandonKey)
+        serverIO.to(this.room.id).emit(GameAbandonEvent)
 
         this.room.playerA = null
         this.room.playerB = null
@@ -54,11 +55,11 @@ export default class PaiShoGame {
     announceWinner(winner: Player) {
         const loser = this.getOtherPlayer(winner)
 
-        winner.socket.emit(gameEndKey, { win: true } as GameEndEvent)
-        loser.socket.emit(gameEndKey, { win: false } as GameEndEvent)
+        winner.socket.emit(GameEndEvent, { win: true } as GameEndPacket)
+        loser.socket.emit(GameEndEvent, { win: false } as GameEndPacket)
     }
 
-    handleTileMove(player: Player, event: TileMoveEvent) {
+    handleTileMove(player: Player, event: TileMovePacket) {
         if (player != this.currentPlayer) {
             return
         }
@@ -90,12 +91,12 @@ export default class PaiShoGame {
         tile.field = field
         field.tile = tile
 
-        const response: TileMoveResponse = { tileId: event.tileId, field: serverField, isMoveByMe: isExecutorA }
-        this.room.playerA!!.socket.emit("<-move-tile", response)
+        const response: TileMoveResponsePacket = { tileId: event.tileId, field: serverField, isMoveByMe: isExecutorA }
+        this.room.playerA!!.socket.emit(TileMoveResponseEvent, response)
 
         response.isMoveByMe = !isExecutorA
         response.field = { x: -serverField.x, y: -serverField.y }
-        this.room.playerB!!.socket.emit("<-move-tile", response)
+        this.room.playerB!!.socket.emit(TileMoveResponseEvent, response)
 
         console.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
 
@@ -127,7 +128,7 @@ export default class PaiShoGame {
             .filter(field => field.tile != null && field.tile.isDark != myTile.isDark)
 
         // calculate all tiles that i can throw
-        const totalThrows: ThrowAction[] = occupiedNeighbourFields
+        const totalThrows: ThrownTile[] = occupiedNeighbourFields
             .filter(field => myTile.canThrow(field.tile!!))
             .map(field => {
                 const obj = {
@@ -151,13 +152,13 @@ export default class PaiShoGame {
         }
 
         if (totalThrows.length > 0) {
-            const event: ThrowsEvent = { actions: totalThrows }
-            this.currentPlayer!!.socket.emit(throwsKey, event)
+            const event: ThrowTilesPacket = { actions: totalThrows }
+            this.currentPlayer!!.socket.emit(ThrowTilesEvent, event)
 
             const otherPlayer = this.getOtherPlayer(this.currentPlayer!!);
             // invert 'isMyTile' property before sending to other player
             event.actions.forEach(action => action.thrower.isMyTile = !action.thrower.isMyTile)
-            otherPlayer.socket.emit(throwsKey, event)
+            otherPlayer.socket.emit(ThrowTilesEvent, event)
 
             totalThrows.forEach(action => {
                 const performer = action.thrower.isMyTile ? this.currentPlayer : otherPlayer;
@@ -176,10 +177,10 @@ export default class PaiShoGame {
         const nowB = lotusB.isInCheck()
 
         if (this.aInCheck != nowA) {
-            this.room.playerA!!.socket.emit(checkStatusKey, { inCheck: nowA } as CheckStatusEvent)
+            this.room.playerA!!.socket.emit(InCheckEvent, { inCheck: nowA } as InCheckPacket)
         }
         if (this.bInCheck != nowB) {
-            this.room.playerB!!.socket.emit(checkStatusKey, { inCheck: nowB } as CheckStatusEvent)
+            this.room.playerB!!.socket.emit(InCheckEvent, { inCheck: nowB } as InCheckPacket)
         }
 
         this.aInCheck = lotusA.isInCheck()
@@ -222,12 +223,12 @@ export default class PaiShoGame {
     setWhoseTurn(nextPlayer: Player) {
         this.currentPlayer = nextPlayer
         this.room.allPlayers.forEach(player => {
-            const event: WhoseTurnEvent = { myTurn: player == nextPlayer }
+            const event: WhoseTurnPacket = { myTurn: player == nextPlayer }
             if (event.myTurn && this.chainJumps != null) {
                 event.chainJumps = this.chainJumps.map(f => ({ x: f.x, y: f.y }))
                 event.tileWhichChainJumps = this.tileWhichChainJumps!!.id
             }
-            player.socket.emit(whoseTurnKey, event)
+            player.socket.emit(WhoseTurnEvent, event)
         })
     }
 

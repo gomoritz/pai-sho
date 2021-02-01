@@ -1,6 +1,7 @@
 import Player from "../objects/player.js";
 import PaiShoGame from "../game/pai-sho-game.js";
-import { passChainJumpKey, TileMoveEvent } from "../../shared/events/move-events.js";
+import { TileMovePacket, TileMoveEvent } from "../../shared/events/tile-move.js";
+import { PassChainJumpEvent } from "../../shared/events/pass-chain-jump.js";
 
 export default class GameRoom {
     playerA: Player | null = null
@@ -25,8 +26,8 @@ export default class GameRoom {
         this.allPlayers.push(player)
         player.socket.join(this.id)
         player.socket.on("disconnect", () => this.removePlayerFromRoom(player))
-        player.socket.on("move-tile", (event: TileMoveEvent) => this.game.handleTileMove(player, event))
-        player.socket.on(passChainJumpKey, () => this.game.handlePassChainJump(player))
+        player.socket.on(TileMoveEvent, (packet: TileMovePacket) => this.game.handleTileMove(player, packet))
+        player.socket.on(PassChainJumpEvent, () => this.game.handlePassChainJump(player))
 
         console.log(`${player.username} joined room ${this.id}`)
 
