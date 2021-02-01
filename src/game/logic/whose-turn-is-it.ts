@@ -28,11 +28,12 @@ export function isInCheck(): boolean {
 export function setIsMyTurn(packet: WhoseTurnPacket | GameStartPacket, isGameStart: boolean = false) {
     if (myTurn == packet.myTurn && myTurn && !isGameStart) {
         const wte = packet as WhoseTurnPacket;
-        showPlayAgain()
-
-        chainJumps = wte.chainJumps!!.map(obj => gameBoard.getField(obj.x, obj.y)!!)
-        tileWhichChainJumps = wte.tileWhichChainJumps!!
-        passButton.style.opacity = "1"
+        if (wte.chainJumps) {
+            showPlayAgain()
+            chainJumps = wte.chainJumps.map(obj => gameBoard.getField(obj.x, obj.y)!!)
+            tileWhichChainJumps = wte.tileWhichChainJumps!!
+            passButton.style.opacity = "1"
+        }
     } else {
         myTurn = packet.myTurn
 
