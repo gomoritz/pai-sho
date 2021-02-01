@@ -182,10 +182,10 @@ export default class PaiShoGame {
     }
 
     canPerformChainJump(originalField: Field, tile: Tile): Field[] | null {
-        const wasJump = !(tile instanceof LotusTile) && canPerformJump(originalField, tile.field!!)
+        const wasJump = !(tile instanceof LotusTile) && canPerformJump(tile, originalField, tile.field!!)
         if (!wasJump) return null
 
-        const fields = Object.values(this.gameBoard.fields).filter(field => canPerformJump(tile.field!!, field));
+        const fields = Object.values(this.gameBoard.fields).filter(field => canPerformJump(tile, tile.field!!, field));
         return fields.length == 0 ? null : fields;
     }
 

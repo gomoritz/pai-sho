@@ -24,15 +24,16 @@ export function canMoveTileToField(tile: Tile, field: Field): boolean {
     if (tile instanceof LotusTile && field.wouldBeInCheck(tile)) return false
 
     if (!previousField.isNeighbourField(field)) {
-        const isJump = !(tile instanceof LotusTile) // lotus tile cannot jump
-            && canPerformJump(tile.field!!, field)
+        const isJump = canPerformJump(tile, tile.field!!, field)
         if (!isJump) return false
     }
 
     return true
 }
 
-export function canPerformJump(origin: Field, target: Field): boolean {
+export function canPerformJump(tile: Tile, origin: Field, target: Field): boolean {
+    if (tile instanceof LotusTile) return false
+
     const dx = Math.abs(origin.x - target.x);
     const dy = Math.abs(origin.y - target.y);
     const distance = dx + dy
@@ -40,7 +41,7 @@ export function canPerformJump(origin: Field, target: Field): boolean {
     if (distance == 2 || (dx == 2 && dy == 2)) {
         const fieldBetween = origin.getFieldBetween(target)
         return fieldBetween != null && fieldBetween.tile != null
-            && fieldBetween.tile.isDark == origin.tile?.isDark // cannot jump over opponent tiles
+            && fieldBetween.tile.isDark == tile.isDark // cannot jump over opponent tiles
             && !(fieldBetween.tile instanceof LotusTile) // cannot jump over lotus tile
     }
 
