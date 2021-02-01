@@ -16,7 +16,9 @@ import { serverIO } from "../socket.js";
 export default class PaiShoGame {
     currentPlayer: Player | null = null
     gameBoard = new GameBoard()
+
     chainJumps: Field[] | null
+    tileWhichChainJumps: Tile | null
 
     aInCheck: boolean = false
     bInCheck: boolean = false
@@ -94,9 +96,11 @@ export default class PaiShoGame {
 
         if (!this.checkForThrows(tile)) {
             this.chainJumps = this.canPerformChainJump(originalField, tile)
+            this.tileWhichChainJumps = this.chainJumps != null ? tile : null
+
             if (this.chainJumps != null) {
                 console.log(`${player.username} can perform a chain jump`)
-                this.setWhoseTurn(player, this.chainJumps)
+                this.setWhoseTurn(player)
                 return
             }
         }
@@ -197,12 +201,13 @@ export default class PaiShoGame {
         }
     }
 
-    setWhoseTurn(nextPlayer: Player, chainJumps?: Field[]) {
+    setWhoseTurn(nextPlayer: Player) {
         this.currentPlayer = nextPlayer
         this.room.allPlayers.forEach(player => {
             const event: WhoseTurnEvent = { myTurn: player == nextPlayer }
-            if (event.myTurn && chainJumps != undefined) {
-                event.chainJumps = chainJumps.map(f => ({ x: f.x, y: f.y }))
+            if (event.myTurn && this.chainJumps != null) {
+                event.chainJumps = this.chainJumps.map(f => ({ x: f.x, y: f.y }))
+                event.tileWhichChainJumps = this.tileWhichChainJumps!!.id
             }
             player.socket.emit(whoseTurnKey, event)
         })

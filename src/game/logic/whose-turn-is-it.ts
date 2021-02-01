@@ -13,7 +13,8 @@ passButton.addEventListener("click", () => emitPassChainJump())
 let myTurn: boolean | null = null
 let inCheck: boolean = false
 
-export let chainJumps: Field[] | null = null
+let chainJumps: Field[] | null = null
+let tileWhichChainJumps: string | null = null
 
 export function isMyTurn(): boolean {
     return myTurn!!
@@ -25,14 +26,17 @@ export function isInCheck(): boolean {
 
 export function setIsMyTurn(event: WhoseTurnEvent | GameStartEvent, isGameStart: boolean = false) {
     if (myTurn == event.myTurn && myTurn && !isGameStart) {
+        const wte = event as WhoseTurnEvent;
         showPlayAgain()
 
-        chainJumps = (event as WhoseTurnEvent).chainJumps!!.map(obj => gameBoard.getField(obj.x, obj.y)!!)
+        chainJumps = wte.chainJumps!!.map(obj => gameBoard.getField(obj.x, obj.y)!!)
+        tileWhichChainJumps = wte.tileWhichChainJumps!!
         passButton.style.opacity = "1"
     } else {
         myTurn = event.myTurn
 
         chainJumps = null
+        tileWhichChainJumps = null
         passButton.style.opacity = "0"
 
         DebugGameOverview.getInstance().state.myTurn = myTurn
@@ -45,7 +49,7 @@ export function setInCheck(event: CheckStatusEvent) {
 }
 
 export function verify(tile: Tile, field: Field): boolean {
-    return verifyChainJumps(field) && verifyCheck(tile, field)
+    return verifyChainJumps(tile, field) && verifyCheck(tile, field)
 }
 
 /**
@@ -53,8 +57,8 @@ export function verify(tile: Tile, field: Field): boolean {
  * the given field is a potential target of such a chain-jump. If no chain-jumps
  * are available, this function returns true for all fields.
  */
-function verifyChainJumps(field: Field): boolean {
-    return chainJumps == null || chainJumps.some(cj => field.equals(cj))
+function verifyChainJumps(tile: Tile, field: Field): boolean {
+    return chainJumps == null || (chainJumps.some(cj => field.equals(cj)) && tile.id == tileWhichChainJumps)
 }
 
 /**

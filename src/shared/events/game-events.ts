@@ -14,6 +14,7 @@ export const whoseTurnKey = "whose-turn"
 export interface WhoseTurnEvent {
     myTurn: boolean
     chainJumps?: { x: number, y: number }[]
+    tileWhichChainJumps?: string
 }
 
 export const throwsKey = "throws"
