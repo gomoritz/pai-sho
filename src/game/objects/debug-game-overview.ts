@@ -1,5 +1,5 @@
 import RenderObject from "./render-object.js";
-import { ctx } from "../game.js";
+import { ctx, isDebug } from "../game.js";
 import { GameStartPacket } from "../../shared/events/game-start.js";
 
 export default class DebugGameOverview extends RenderObject {
@@ -15,6 +15,8 @@ export default class DebugGameOverview extends RenderObject {
     }
 
     render = (): void => {
+        if (!isDebug) return
+
         ctx.font = "16px monospace"
         ctx.fillStyle = "#FFFFFFFF"
 
