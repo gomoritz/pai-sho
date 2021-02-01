@@ -230,7 +230,8 @@ export default class PaiShoGame {
         this.room.allPlayers.forEach(player => {
             const event: WhoseTurnPacket = { myTurn: player == nextPlayer }
             if (event.myTurn && this.chainJumps != null) {
-                event.chainJumps = this.chainJumps.map(f => ({ x: f.x, y: f.y }))
+                const n = player == this.room.playerA ? 1 : -1
+                event.chainJumps = this.chainJumps.map(f => ({ x: f.x * n, y: f.y * n }))
                 event.tileWhichChainJumps = this.tileWhichChainJumps!!.id
             }
             player.socket.emit(WhoseTurnEvent, event)
