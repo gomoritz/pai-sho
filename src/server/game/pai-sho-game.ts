@@ -74,7 +74,7 @@ export default class PaiShoGame {
         const field = this.gameBoard.getField(serverField.x, serverField.y)
         const tile = (isExecutorA ? myTiles : opponentTiles).find(it => it.id == event.tileId)
 
-        if (field == null || tile == null || !canMoveTileToField(tile, field) || !this.verifyChainJumps(field)) {
+        if (field == null || tile == null || !canMoveTileToField(tile, field) || !this.verifyChainJumps(tile, field)) {
             return console.log("error invalid tile move");
         }
 
@@ -218,8 +218,8 @@ export default class PaiShoGame {
      * the given field is a potential target of such a chain-jump. If no chain-jumps
      * are available, this function returns true for all fields.
      */
-    verifyChainJumps(field: Field): boolean {
-        return this.chainJumps == null || this.chainJumps.some(cj => field.equals(cj))
+    verifyChainJumps(tile: Tile, field: Field): boolean {
+        return this.chainJumps == null || (this.chainJumps.some(cj => field.equals(cj)) && tile.equals(this.tileWhichChainJumps))
     }
 
     getOtherPlayer(p: Player): Player {
