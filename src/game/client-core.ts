@@ -1,14 +1,14 @@
 import { JoinRoomEvent, JoinRoomResponse } from "../shared/events/room-events.js";
 import { Tile } from "../shared/logic/tiles.js";
 import Field from "../shared/logic/field.js";
-import { passChainJumpKey, TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js";
+import { CheckStatusEvent, checkStatusKey, passChainJumpKey, TileMoveEvent, TileMoveResponse } from "../shared/events/move-events.js";
 import { doTileMove } from "../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
 import { gameAbandonKey, GameStartEvent, gameStartKey, ThrowsEvent, throwsKey, WhoseTurnEvent, whoseTurnKey } from "../shared/events/game-events.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
-import { setIsMyTurn } from "./logic/whose-turn-is-it.js";
+import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
 import { myTiles, opponentTiles } from "../shared/logic/lineup.js";
 import { hideOverlay } from "./utils/overlay.js";
 
@@ -71,8 +71,16 @@ clientIO.on(gameAbandonKey, () => {
     window.location.search = `roomId=${roomId}&username=${username}`
 })
 
+clientIO.on("disconnect", () => {
+    window.location.search = `roomId=${roomId}&username=${username}`
+})
+
 clientIO.on(whoseTurnKey, (event: WhoseTurnEvent) => {
     setIsMyTurn(event)
+})
+
+clientIO.on(checkStatusKey, (event: CheckStatusEvent) => {
+    setInCheck(event)
 })
 
 export function emitPassChainJump() {

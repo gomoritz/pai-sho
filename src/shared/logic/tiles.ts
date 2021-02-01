@@ -68,6 +68,12 @@ export class LotusTile extends Tile {
     canThrow(other: Tile): boolean {
         return false;
     }
+
+    isInCheck(): boolean {
+        return this.field?.getNeighbourFields()
+            .some(field => field.tile != null && field.tile.isDark != this.isDark)
+            ?? false
+    }
 }
 
 export class AvatarTile extends Tile {
@@ -76,7 +82,7 @@ export class AvatarTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return true;
+        return !(other instanceof LotusTile);
     }
 }
 
@@ -86,7 +92,7 @@ export class AirTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof WaterTile || other instanceof AvatarTile || other instanceof LotusTile;
+        return other instanceof WaterTile || other instanceof AvatarTile;
     }
 }
 
@@ -96,7 +102,7 @@ export class EarthTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof FireTile || other instanceof AvatarTile || other instanceof LotusTile;
+        return other instanceof FireTile || other instanceof AvatarTile;
     }
 }
 
@@ -106,7 +112,7 @@ export class FireTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof AirTile || other instanceof AvatarTile || other instanceof LotusTile;
+        return other instanceof AirTile || other instanceof AvatarTile;
     }
 }
 
@@ -116,6 +122,6 @@ export class WaterTile extends Tile {
     }
 
     canThrow(other: Tile): boolean {
-        return other instanceof EarthTile || other instanceof AvatarTile || other instanceof LotusTile;
+        return other instanceof EarthTile || other instanceof AvatarTile;
     }
 }

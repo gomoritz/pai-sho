@@ -1,6 +1,6 @@
 import GameRoom from "../room/game-room.js";
 import Player from "../objects/player.js";
-import { TileMoveEvent, TileMoveResponse } from "../../shared/events/move-events.js";
+import { CheckStatusEvent, checkStatusKey, TileMoveEvent, TileMoveResponse } from "../../shared/events/move-events.js";
 import GameBoard from "../../shared/logic/game-board.js";
 import { buildLineup, myTiles, opponentTiles } from "../../shared/logic/lineup.js";
 import { canMoveTileToField, canPerformJump } from "../../shared/logic/tile-moves.js";
@@ -17,6 +17,9 @@ export default class PaiShoGame {
     currentPlayer: Player | null = null
     gameBoard = new GameBoard()
     chainJumps: Field[] | null
+
+    aInCheck: boolean = false
+    bInCheck: boolean = false
 
     constructor(private room: GameRoom) {
         this.gameBoard.loadFields()
@@ -87,6 +90,8 @@ export default class PaiShoGame {
 
         console.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
 
+        this.checkForInCheck()
+
         if (!this.checkForThrows(tile)) {
             this.chainJumps = this.canPerformChainJump(originalField, tile)
             if (this.chainJumps != null) {
@@ -147,6 +152,33 @@ export default class PaiShoGame {
         }
 
         return candidate != null
+    }
+
+    checkForInCheck() {
+        const lotusA = myTiles.find(it => it.id == "lotus") as LotusTile
+        const lotusB = opponentTiles.find(it => it.id == "lotus") as LotusTile
+
+        const nowA = lotusA.isInCheck()
+        const nowB = lotusB.isInCheck()
+
+        if (this.aInCheck && nowA) {
+            // A loses
+            return
+        }
+        if (this.bInCheck && nowB) {
+            // B loses
+            return;
+        }
+
+        if (this.aInCheck != nowA) {
+            this.room.playerA!!.socket.emit(checkStatusKey, { inCheck: nowA } as CheckStatusEvent)
+        }
+        if (this.bInCheck != nowB) {
+            this.room.playerB!!.socket.emit(checkStatusKey, { inCheck: nowB } as CheckStatusEvent)
+        }
+
+        this.aInCheck = lotusA.isInCheck()
+        this.bInCheck = lotusB.isInCheck()
     }
 
     canPerformChainJump(originalField: Field, tile: Tile): Field[] | null {

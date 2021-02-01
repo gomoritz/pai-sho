@@ -3,7 +3,7 @@
  * the game board.
  */
 
-import { Tile } from "../../shared/logic/tiles.js";
+import { LotusTile, Tile } from "../../shared/logic/tiles.js";
 import { canvas, ctx, draw, isDebug } from "../game.js";
 import { gameBoardRenderer, renderObjects } from "../render-core.js";
 import Point, { subtract } from "../../shared/utils/point.js";
@@ -14,7 +14,7 @@ import { cancelEvent } from "../utils/events.js";
 import Field from "../../shared/logic/field.js";
 import { HintRenderer } from "../objects/hint-renderer.js";
 import { emitMoveTile } from "../client-core.js";
-import { isMyTurn, verifyChainJumps } from "./whose-turn-is-it.js";
+import { isInCheck, isMyTurn, verify } from "./whose-turn-is-it.js";
 
 let movingMode: "drag" | "click" = "click"
 let mousePosition: Point = { x: 0, y: 0 }
@@ -67,7 +67,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
         const relPos = subtract(absPos, gameBoardRenderer.center)
 
         closestHintField = gameBoard.getClosestField(relPos)
-        if (closestHintField && (!canMoveTileToField(movingTile!!, closestHintField) || !verifyChainJumps(closestHintField)))
+        if (closestHintField && (!canMoveTileToField(movingTile!!, closestHintField) || !verify(movingTile!!, closestHintField)))
             closestHintField = null
 
         if (movingMode == "drag") {
@@ -164,7 +164,7 @@ function handleMouseClick(event: MouseEvent) {
 }
 
 export function tryTileMove(tile: Tile, field: Field) {
-    if (!canMoveTileToField(tile, field) || !verifyChainJumps(field)) return
+    if (!canMoveTileToField(tile, field) || !verify(tile, field)) return
 
     emitMoveTile(tile, field)
 }

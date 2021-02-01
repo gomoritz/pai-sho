@@ -8,3 +8,8 @@ export interface TileMoveResponse extends TileMoveEvent {
 }
 
 export const passChainJumpKey = "pass-chain-jump"
+
+export const checkStatusKey = "check-status"
+export interface CheckStatusEvent {
+    inCheck: boolean
+}

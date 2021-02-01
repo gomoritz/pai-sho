@@ -1,6 +1,6 @@
 import { Direction } from "./direction.js";
 import Point from "../utils/point.js";
-import { Tile } from "./tiles.js";
+import { LotusTile, Tile } from "./tiles.js";
 import GameBoard from "./game-board.js";
 
 export default class Field {
@@ -78,5 +78,9 @@ export default class Field {
 
     serialize(): { x: number, y: number } {
         return { x: this.x, y: this.y }
+    }
+
+    wouldBeInCheck(tile: LotusTile): boolean {
+        return this.getNeighbourFields().some(other => other.tile != null && other.tile.isDark != tile.isDark)
     }
 }

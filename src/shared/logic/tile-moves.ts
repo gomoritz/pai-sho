@@ -20,11 +20,8 @@ export function canMoveTileToField(tile: Tile, field: Field): boolean {
     // check is occupied
     if (field.tile != null) return false
 
-    if (tile instanceof LotusTile) {
-        // lotus tile moves into check
-        if (field?.getNeighbourFields().some(other => other.tile != null && other.tile.isDark != tile.isDark))
-            return false
-    }
+    // lotus tile moves into check
+    if (tile instanceof LotusTile && field.wouldBeInCheck(tile)) return false
 
     if (!previousField.isNeighbourField(field)) {
         const isJump = !(tile instanceof LotusTile) // lotus tile cannot jump
