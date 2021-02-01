@@ -57,6 +57,16 @@ export abstract class Tile {
         return this
     }
 
+    equals(other: Tile | null): boolean {
+        if (other == null) return false
+        return other.id == this.id && other.isDark == this.isDark
+    }
+
+    serialize(): string {
+        return this.id
+    }
+
+
     abstract canThrow(other: Tile): boolean
 }
 
@@ -73,6 +83,16 @@ export class LotusTile extends Tile {
         return this.field?.getNeighbourFields()
             .some(field => field.tile != null && field.tile.isDark != this.isDark)
             ?? false
+    }
+
+    isInCheckMate(): boolean {
+        return this.field?.getNeighbourFields()
+            .every(field => field.tile != null || field.wouldBeInCheck(this))
+            ?? false
+    }
+
+    bringsVictory(): boolean {
+        return this.field?.x == 0 && this.field.y == 0 && !this.isInCheck()
     }
 }
 

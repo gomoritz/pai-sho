@@ -10,6 +10,11 @@ export interface GameStartEvent {
 
 export const gameAbandonKey = "game-abandon"
 
+export const gameEndKey = "game-end"
+export interface GameEndEvent {
+    win: boolean
+}
+
 export const whoseTurnKey = "whose-turn"
 export interface WhoseTurnEvent {
     myTurn: boolean

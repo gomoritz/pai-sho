@@ -5,12 +5,21 @@ import { CheckStatusEvent, checkStatusKey, passChainJumpKey, TileMoveEvent, Tile
 import { doTileMove } from "../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
-import { gameAbandonKey, GameStartEvent, gameStartKey, ThrowsEvent, throwsKey, WhoseTurnEvent, whoseTurnKey } from "../shared/events/game-events.js";
+import {
+    gameAbandonKey, GameEndEvent,
+    gameEndKey,
+    GameStartEvent,
+    gameStartKey,
+    ThrowsEvent,
+    throwsKey,
+    WhoseTurnEvent,
+    whoseTurnKey
+} from "../shared/events/game-events.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
 import { myTiles, opponentTiles } from "../shared/logic/lineup.js";
-import { hideOverlay } from "./utils/overlay.js";
+import { hideOverlay, showOverlay } from "./utils/overlay.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
@@ -65,6 +74,10 @@ clientIO.on(gameStartKey, (event: GameStartEvent) => {
     renderObjects.push(new DebugGameOverview(event))
     setIsMyTurn(event, true)
     hideOverlay()
+})
+
+clientIO.on(gameEndKey, (event: GameEndEvent) => {
+    showOverlay(`You ${event.win ? "won" : "lost"}!`)
 })
 
 clientIO.on(gameAbandonKey, () => {

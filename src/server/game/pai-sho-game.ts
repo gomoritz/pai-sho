@@ -9,7 +9,7 @@ import Field from "../../shared/logic/field.js";
 import {
     gameAbandonKey, gameStartKey, GameStartEvent,
     whoseTurnKey, WhoseTurnEvent,
-    throwsKey, ThrowAction, ThrowsEvent
+    throwsKey, ThrowAction, ThrowsEvent, gameEndKey, GameEndEvent
 } from "../../shared/events/game-events.js";
 import { serverIO } from "../socket.js";
 
@@ -49,6 +49,13 @@ export default class PaiShoGame {
         this.room.playerB = null
         this.room.allPlayers = []
         this.room.game = new PaiShoGame(this.room)
+    }
+
+    announceWinner(winner: Player) {
+        const loser = this.getOtherPlayer(winner)
+
+        winner.socket.emit(gameEndKey, { win: true } as GameEndEvent)
+        loser.socket.emit(gameEndKey, { win: false } as GameEndEvent)
     }
 
     handleTileMove(player: Player, event: TileMoveEvent) {
@@ -93,8 +100,11 @@ export default class PaiShoGame {
         console.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
 
         this.checkForInCheck()
+        const isThrown = this.checkForThrows(tile)
+        const gameEnds = this.checkForGameEnd()
+        if (gameEnds) return console.log("Game is ending")
 
-        if (!this.checkForThrows(tile)) {
+        if (!isThrown) {
             this.chainJumps = this.canPerformChainJump(originalField, tile)
             this.tileWhichChainJumps = this.chainJumps != null ? tile : null
 
@@ -165,15 +175,6 @@ export default class PaiShoGame {
         const nowA = lotusA.isInCheck()
         const nowB = lotusB.isInCheck()
 
-        if (this.aInCheck && nowA) {
-            // A loses
-            return
-        }
-        if (this.bInCheck && nowB) {
-            // B loses
-            return;
-        }
-
         if (this.aInCheck != nowA) {
             this.room.playerA!!.socket.emit(checkStatusKey, { inCheck: nowA } as CheckStatusEvent)
         }
@@ -183,6 +184,23 @@ export default class PaiShoGame {
 
         this.aInCheck = lotusA.isInCheck()
         this.bInCheck = lotusB.isInCheck()
+    }
+
+    checkForGameEnd(): boolean {
+        const lotusA = myTiles.find(it => it.id == "lotus") as LotusTile
+        const lotusB = opponentTiles.find(it => it.id == "lotus") as LotusTile
+
+        let winner: Player
+
+        if (lotusA.bringsVictory() || lotusB.isInCheckMate()) {
+            winner = this.room.playerA!!
+        } else if (lotusB.bringsVictory() || lotusA.isInCheckMate()) {
+            winner = this.room.playerB!!
+        } else return false
+
+        this.announceWinner(winner)
+        console.log(`${winner.username} wins the game`)
+        return true
     }
 
     canPerformChainJump(originalField: Field, tile: Tile): Field[] | null {
