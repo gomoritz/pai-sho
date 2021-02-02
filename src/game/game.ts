@@ -19,8 +19,7 @@ function setCanvasDimensions() {
 }
 
 export function draw() {
-    ctx.fillStyle = "rgb(0, 0, 0)"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     renderCanvas()
 }

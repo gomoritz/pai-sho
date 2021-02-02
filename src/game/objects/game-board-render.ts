@@ -14,6 +14,8 @@ export default class GameBoardRender extends RenderObject {
             y: canvas.height / 2
         }
 
+        this.drawDecoration()
+
         this.clipGameBoardCircle()
 
         this.fillBackground()
@@ -24,8 +26,39 @@ export default class GameBoardRender extends RenderObject {
         this.resetClip()
     }
 
+    drawDecoration() {
+        const dx = 3
+        const dy = 5
+        const gradient = ctx.createRadialGradient(this.center.x + dx, this.center.y + dy, gameBoardRadius - 20,
+            this.center.x + dx, this.center.y + dy, gameBoardRadius + 50)
+        gradient.addColorStop(0, "rgba(0,0,0,0.8)")
+        gradient.addColorStop(0.75, "rgba(0,0,0,0.01)")
+        gradient.addColorStop(1.0, "rgba(0,0,0,0.0)")
+
+        ctx.fillStyle = gradient
+        ctx.beginPath()
+        ctx.arc(this.center.x + dx, this.center.y + dy, gameBoardRadius + 60, 0, Math.PI * 2)
+        ctx.fill()
+
+        ctx.fillStyle = "#e4b265"
+        ctx.beginPath()
+        ctx.arc(this.center.x, this.center.y, gameBoardRadius + 22, 0, Math.PI * 2)
+        ctx.fill()
+
+        ctx.fillStyle = "#c68b55"
+        ctx.beginPath()
+        ctx.arc(this.center.x, this.center.y, gameBoardRadius + 9, 0, Math.PI * 2)
+        ctx.fill()
+
+        ctx.fillStyle = "#000"
+        ctx.beginPath()
+        ctx.arc(this.center.x, this.center.y, gameBoardRadius + 3, 0, Math.PI * 2)
+        ctx.fill()
+    }
+
     clipGameBoardCircle() {
         ctx.save()
+        ctx.beginPath()
         ctx.arc(this.center.x, this.center.y, gameBoardRadius, 0, Math.PI * 2)
         ctx.clip()
     }

@@ -7,9 +7,20 @@ body {
    height: 100vh;
 }
 
-canvas {
+#main-wrapper {
    width: 100%;
    height: 100%;
+
+   background-image: url("../resources/background/2.png");
+   background-size: cover;
+   background-position: center;
+}
+
+#main-canvas {
+   width: 100%;
+   height: 100%;
+
+   backdrop-filter: blur(5px) brightness(70%);
 }
 
 #pass-chain-jump {
