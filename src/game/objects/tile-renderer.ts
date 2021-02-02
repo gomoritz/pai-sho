@@ -3,7 +3,7 @@ import { Tile } from "../../shared/logic/tiles.js";
 import { add } from "../../shared/utils/point.js";
 import { gameBoardRenderer } from "../render-core.js";
 import { ctx } from "../game.js";
-import { selectedSize, tileSize } from "../../shared/utils/dimensions.js";
+import { selectedSize, tileShadowOffset, tileSize } from "../../shared/utils/dimensions.js";
 
 export default class TileRenderer extends RenderObject {
 
@@ -23,7 +23,7 @@ export default class TileRenderer extends RenderObject {
 
         const cornerX = x - renderSize / 2
         const cornerY = y - renderSize / 2
-        const shadowOffset = this.tile.isClicked ? 2 : 1
+        const shadowOffset = this.tile.isClicked ? 2 * tileShadowOffset : tileShadowOffset
 
         ctx.fillStyle = "rgba(0,0,0,.7)"
         ctx.beginPath()
