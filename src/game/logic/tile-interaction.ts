@@ -24,7 +24,7 @@ let hoveredTile: Tile | null = null
 export { closestHintField, movingTile }
 
 export function createTileListeners() {
-    canvas.addEventListener("click", handleMouseClick)
+    canvas.addEventListener("click", handleClick)
     canvas.addEventListener("mousemove", handleMove)
     canvas.addEventListener("contextmenu", cancelEvent)
 }
@@ -34,7 +34,7 @@ export function createHintRenderer() {
 }
 
 function handleMove(event: MouseEvent) {
-    const point = parseTouchOrMouse(event)
+    const point = { x: event.clientX, y: event.clientY }
 
     if (movingTile != null) {
         const relPos = gameBoardRenderer.relativeToCenter(point)
@@ -44,9 +44,9 @@ function handleMove(event: MouseEvent) {
             closestHintField = null
 
         if (closestHintField != null) {
-            canvas.style.cursor = "pointer"
+            setCursor(event, "pointer")
         } else {
-            canvas.style.cursor = "default"
+            setCursor(event, "default")
         }
 
         draw()
@@ -55,13 +55,13 @@ function handleMove(event: MouseEvent) {
         const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
 
         if (hovered === undefined || !isMyTurn()) {
-            canvas.style.cursor = "default"
+            setCursor(event, "default")
             if (hoveredTile != null) {
                 clearHoveredTile()
                 draw()
             }
         } else {
-            canvas.style.cursor = "pointer"
+            setCursor(event, "pointer")
             setHoveredTile(hovered)
             draw()
 
@@ -80,7 +80,8 @@ function handleMove(event: MouseEvent) {
     }
 }
 
-function handleMouseClick(event: MouseEvent) {
+function handleClick(event: MouseEvent) {
+    event.preventDefault()
     if (event.button != 0) return
     if (!isMyTurn()) return
 
@@ -100,6 +101,18 @@ function handleMouseClick(event: MouseEvent) {
         clearClickedTile()
         draw()
     }
+}
+
+function setCursor(event: MouseEvent, state: "pointer" | "default") {
+    if ("sourceCapabilities" in event) {
+        const source = (event as { sourceCapabilities: { firesTouchEvents: boolean } }).sourceCapabilities
+        if (source.firesTouchEvents) {
+            canvas.style.cursor = "default"
+            return
+        }
+    }
+
+    canvas.style.cursor = state
 }
 
 export function tryTileMove(tile: Tile, field: Field) {
