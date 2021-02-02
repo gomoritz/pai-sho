@@ -199,6 +199,6 @@ export default class GameBoardRender extends RenderObject {
     }
 
     relativeToCenter(point: Point): Point {
-        return subtract(multiply(point, scale), this.center)
+        return subtract(point, this.center)
     }
 }
