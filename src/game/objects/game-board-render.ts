@@ -2,8 +2,15 @@ import RenderObject from "./render-object.js";
 import { canvas, ctx, isDebug } from "../game.js";
 import { brown, red, white } from "../utils/colors.js";
 import { drawTriangle } from "../shapes/triangle.js";
-import { innerTrianglesHeight, gameBoardRadius, lineGap } from "../../shared/utils/dimensions.js";
-import Point from "../../shared/utils/point.js";
+import {
+    innerTrianglesHeight,
+    gameBoardRadius,
+    lineGap,
+    scale,
+    shadowGradientInnerRadius,
+    shadowGradientOuterRadius, shadowOffsetX, shadowOffsetY, outerBorder, innerBorder, lineStroke
+} from "../../shared/utils/dimensions.js";
+import Point, { multiply, subtract } from "../../shared/utils/point.js";
 
 export default class GameBoardRender extends RenderObject {
     public center: Point
@@ -27,32 +34,32 @@ export default class GameBoardRender extends RenderObject {
     }
 
     drawDecoration() {
-        const dx = 3
-        const dy = 5
-        const gradient = ctx.createRadialGradient(this.center.x + dx, this.center.y + dy, gameBoardRadius - 20,
-            this.center.x + dx, this.center.y + dy, gameBoardRadius + 50)
+        const dx = shadowOffsetX
+        const dy = shadowOffsetY
+        const gradient = ctx.createRadialGradient(this.center.x + dx, this.center.y + dy, shadowGradientInnerRadius,
+            this.center.x + dx, this.center.y + dy, shadowGradientOuterRadius)
         gradient.addColorStop(0, "rgba(0,0,0,0.8)")
         gradient.addColorStop(0.75, "rgba(0,0,0,0.01)")
         gradient.addColorStop(1.0, "rgba(0,0,0,0.0)")
 
         ctx.fillStyle = gradient
         ctx.beginPath()
-        ctx.arc(this.center.x + dx, this.center.y + dy, gameBoardRadius + 60, 0, Math.PI * 2)
+        ctx.arc(this.center.x + dx, this.center.y + dy, shadowGradientOuterRadius + dx + dy, 0, Math.PI * 2)
         ctx.fill()
 
         ctx.fillStyle = "#e4b265"
         ctx.beginPath()
-        ctx.arc(this.center.x, this.center.y, gameBoardRadius + 22, 0, Math.PI * 2)
+        ctx.arc(this.center.x, this.center.y, outerBorder, 0, Math.PI * 2)
         ctx.fill()
 
         ctx.fillStyle = "#c68b55"
         ctx.beginPath()
-        ctx.arc(this.center.x, this.center.y, gameBoardRadius + 9, 0, Math.PI * 2)
+        ctx.arc(this.center.x, this.center.y, innerBorder, 0, Math.PI * 2)
         ctx.fill()
 
         ctx.fillStyle = "#000"
         ctx.beginPath()
-        ctx.arc(this.center.x, this.center.y, gameBoardRadius + 3, 0, Math.PI * 2)
+        ctx.arc(this.center.x, this.center.y, gameBoardRadius + lineStroke, 0, Math.PI * 2)
         ctx.fill()
     }
 
@@ -137,11 +144,11 @@ export default class GameBoardRender extends RenderObject {
             ctx.strokeStyle = "#0062FF"
             ctx.fillStyle = "#0062FF"
             ctx.font = "20px monospace"
-            ctx.lineWidth = 3
         } else {
             ctx.strokeStyle = "#000"
-            ctx.lineWidth = 3
         }
+
+        ctx.lineWidth = lineStroke
 
         for (let i = 0; i < 9; i++) {
             const lineOffset = i * lineGap
@@ -189,5 +196,9 @@ export default class GameBoardRender extends RenderObject {
         }
 
         if (isDebug) this.clipGameBoardCircle()
+    }
+
+    relativeToCenter(point: Point): Point {
+        return subtract(multiply(point, scale), this.center)
     }
 }

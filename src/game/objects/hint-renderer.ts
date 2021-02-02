@@ -6,6 +6,7 @@ import { gameBoardRenderer } from "../render-core.js";
 import { ctx } from "../game.js";
 import { closestHintField, movingTile } from "../logic/tile-interaction.js";
 import { verify } from "../logic/whose-turn-is-it.js";
+import { hintSize } from "../../shared/utils/dimensions.js";
 
 export class HintRenderer extends RenderObject {
     render = () => {
@@ -18,12 +19,12 @@ export class HintRenderer extends RenderObject {
 
                 ctx.save()
                 ctx.globalAlpha = .4
-                movingTile!!.renderer.renderTileImage(pos.x - 20, pos.y - 20, 40)
+                movingTile!!.renderer.renderTileImage(pos.x - hintSize / 2, pos.y - hintSize / 2, hintSize)
                 ctx.restore()
 
                 if (field.x == closestHintField?.x && field.y == closestHintField.y) {
                     ctx.beginPath()
-                    ctx.arc(pos.x, pos.y, 20, 0, Math.PI * 2)
+                    ctx.arc(pos.x, pos.y, hintSize / 2, 0, Math.PI * 2)
                     ctx.fillStyle = "rgba(0,0,0,.3)"
                     ctx.fill()
                     ctx.closePath()

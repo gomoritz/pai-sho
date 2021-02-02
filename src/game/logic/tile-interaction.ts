@@ -64,7 +64,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
 
     if (movingTile != null) {
         const absPos = movingMode == "drag" ? movingTile.dragPosition!! : mousePosition
-        const relPos = subtract(absPos, gameBoardRenderer.center)
+        const relPos = gameBoardRenderer.relativeToCenter(absPos)
 
         closestHintField = gameBoard.getClosestField(relPos)
         if (closestHintField && (!canMoveTileToField(movingTile!!, closestHintField) || !verify(movingTile!!, closestHintField)))
@@ -82,7 +82,7 @@ function handleMove(event: MouseEvent | TouchEvent) {
 
         draw()
     } else {
-        const relativePoint = subtract(point, gameBoardRenderer.center)
+        const relativePoint = gameBoardRenderer.relativeToCenter(point)
         const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
 
         if (hovered === undefined || !isMyTurn()) {
@@ -116,7 +116,7 @@ function handleInteractionStart(event: MouseEvent | TouchEvent) {
     if (!isMyTurn()) return
 
     const point = parseTouchOrMouse(event)
-    const relativePoint = subtract(point, gameBoardRenderer.center)
+    const relativePoint = gameBoardRenderer.relativeToCenter(point)
     const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
 
     if (hovered != null) {
@@ -129,7 +129,7 @@ function handleInteractionEnd(event: MouseEvent) {
     if ("button" in event && event.button != 0) return
 
     if (movingTile != null) {
-        const relative = subtract(movingTile.dragPosition!!, gameBoardRenderer.center)
+        const relative = gameBoardRenderer.relativeToCenter(movingTile.dragPosition!!)
         const field = gameBoard.getClosestField(relative)
 
         if (field != null) {
@@ -151,7 +151,7 @@ function handleMouseClick(event: MouseEvent) {
             draw()
         }
     } else {
-        const relative = subtract({ x: event.clientX, y: event.clientY }, gameBoardRenderer.center)
+        const relative = gameBoardRenderer.relativeToCenter({ x: event.clientX, y: event.clientY })
         const field = gameBoard.getClosestField(relative)
 
         if (field != null) {

@@ -1,6 +1,6 @@
-import { gameBoardRadius, lineGap } from "../utils/dimensions.js";
 import Field from "./field.js";
 import Point, { distanceBetween } from "../utils/point.js";
+import { gameBoardRadius, lineGap, tileSize } from "../utils/dimensions.js";
 
 export default class GameBoard {
     public fields: { [coordinate: string]: Field }
@@ -46,7 +46,7 @@ export default class GameBoard {
         const closest = Object.values(this.fields).find(field => {
             const position = field.translateToPoint()!!
             const distance = distanceBetween(point, position)
-            return distance < 20
+            return distance < tileSize / 2
         })
 
         return closest ?? null

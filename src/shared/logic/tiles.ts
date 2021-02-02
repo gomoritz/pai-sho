@@ -3,8 +3,7 @@ import Field from "./field.js";
 import GameBoard from "./game-board.js";
 import TileRenderer from "../../game/objects/tile-renderer.js";
 import { myTiles, opponentTiles } from "./lineup.js";
-
-export const size = 42
+import { tileSize } from "../utils/dimensions.js";
 
 export abstract class Tile {
     public field: Field | null
@@ -48,7 +47,7 @@ export abstract class Tile {
         const relativePoint = subtract(point, myPosition)
 
         const diagonal = Math.sqrt(Math.pow(relativePoint.x, 2) + Math.pow(relativePoint.y, 2))
-        return diagonal <= size / 2
+        return diagonal <= tileSize / 2
     }
 
     atField(gameBoard: GameBoard, x: number, y: number): this {

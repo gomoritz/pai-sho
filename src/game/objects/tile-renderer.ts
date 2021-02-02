@@ -1,8 +1,9 @@
 import RenderObject from "./render-object.js";
-import { size, Tile } from "../../shared/logic/tiles.js";
+import { Tile } from "../../shared/logic/tiles.js";
 import { add } from "../../shared/utils/point.js";
 import { gameBoardRenderer } from "../render-core.js";
 import { ctx } from "../game.js";
+import { selectedSize, tileSize } from "../../shared/utils/dimensions.js";
 
 export default class TileRenderer extends RenderObject {
 
@@ -17,7 +18,7 @@ export default class TileRenderer extends RenderObject {
     render = (): void => {
         if (this.tile.isThrown || this.tile.field == undefined) return
 
-        const renderSize = this.tile.isBeingDragged || this.tile.isClicked ? 45 : size
+        const renderSize = this.tile.isBeingDragged || this.tile.isClicked ? selectedSize : tileSize
         let { x, y } = add(gameBoardRenderer.center, this.tile.field.translateToPoint()!!)
 
         if (this.tile.isBeingDragged && this.tile.dragPosition != null) {
