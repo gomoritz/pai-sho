@@ -12,9 +12,7 @@ export abstract class Tile {
     public renderer: TileRenderer
 
     public isHovered: boolean = false
-    public isBeingDragged: boolean = false
     public isClicked: boolean = false;
-    public dragPosition: Point | null = null
 
     protected constructor(public imageResource: string, public id: string, public isDark: boolean) {
     }
@@ -22,7 +20,6 @@ export abstract class Tile {
     setThrown() {
         this.isThrown = true
         this.isHovered = false
-        this.isBeingDragged = false
         this.isClicked = false
         this.field!!.tile = null
         this.field = null

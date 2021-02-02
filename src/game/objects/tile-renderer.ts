@@ -18,17 +18,12 @@ export default class TileRenderer extends RenderObject {
     render = (): void => {
         if (this.tile.isThrown || this.tile.field == undefined) return
 
-        const renderSize = this.tile.isBeingDragged || this.tile.isClicked ? selectedSize : tileSize
+        const renderSize = this.tile.isClicked ? selectedSize : tileSize
         let { x, y } = add(gameBoardRenderer.center, this.tile.field.translateToPoint()!!)
-
-        if (this.tile.isBeingDragged && this.tile.dragPosition != null) {
-            x = this.tile.dragPosition.x
-            y = this.tile.dragPosition.y
-        }
 
         const cornerX = x - renderSize / 2
         const cornerY = y - renderSize / 2
-        const shadowOffset = this.tile.isBeingDragged || this.tile.isClicked ? 2 : 1
+        const shadowOffset = this.tile.isClicked ? 2 : 1
 
         ctx.fillStyle = "rgba(0,0,0,.7)"
         ctx.beginPath()
@@ -38,18 +33,11 @@ export default class TileRenderer extends RenderObject {
 
         this.renderTileImage(cornerX, cornerY, renderSize)
 
-        if (this.tile.isClicked) {
-            ctx.fillStyle = "rgba(255,255,255,.3)"
+        if (this.tile.isClicked || this.tile.isHovered) {
+            ctx.fillStyle = this.tile.isClicked ? "rgba(255,255,255,.3)" : "rgba(255,255,255,.15)"
             ctx.beginPath()
             ctx.arc(x, y, renderSize / 2, 0, Math.PI * 2)
             ctx.fill()
-            ctx.closePath()
-        } else if (this.tile.isBeingDragged || this.tile.isHovered) {
-            ctx.fillStyle = "rgba(255,255,255,.15)"
-            ctx.beginPath()
-            ctx.arc(x, y, renderSize / 2, 0, Math.PI * 2)
-            ctx.fill()
-            ctx.closePath()
         }
     };
 
@@ -59,5 +47,5 @@ export default class TileRenderer extends RenderObject {
         ctx.drawImage(this.imageElement, x, y, size, size)
     }
 
-    requiresDefer = () => this.tile.isBeingDragged || this.tile.isClicked
+    requiresDefer = () => this.tile.isClicked
 }

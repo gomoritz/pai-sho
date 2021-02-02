@@ -3,14 +3,10 @@ import { canvas, ctx, isDebug } from "../game.js";
 import { brown, red, white } from "../utils/colors.js";
 import { drawTriangle } from "../shapes/triangle.js";
 import {
-    innerTrianglesHeight,
-    gameBoardRadius,
-    lineGap,
-    scale,
-    shadowGradientInnerRadius,
+    innerTrianglesHeight, gameBoardRadius, lineGap, shadowGradientInnerRadius,
     shadowGradientOuterRadius, shadowOffsetX, shadowOffsetY, outerBorder, innerBorder, lineStroke
 } from "../../shared/utils/dimensions.js";
-import Point, { multiply, subtract } from "../../shared/utils/point.js";
+import Point, { subtract } from "../../shared/utils/point.js";
 
 export default class GameBoardRender extends RenderObject {
     public center: Point

@@ -3,10 +3,10 @@
  * the game board.
  */
 
-import { LotusTile, Tile } from "../../shared/logic/tiles.js";
+import { Tile } from "../../shared/logic/tiles.js";
 import { canvas, ctx, draw, isDebug } from "../game.js";
 import { gameBoardRenderer, renderObjects } from "../render-core.js";
-import Point, { subtract } from "../../shared/utils/point.js";
+import Point from "../../shared/utils/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "../../shared/logic/lineup.js";
 import { canMoveTileToField } from "../../shared/logic/tile-moves.js";
@@ -14,10 +14,8 @@ import { cancelEvent } from "../utils/events.js";
 import Field from "../../shared/logic/field.js";
 import { HintRenderer } from "../objects/hint-renderer.js";
 import { emitMoveTile } from "../client-core.js";
-import { isInCheck, isMyTurn, verify } from "./whose-turn-is-it.js";
+import { isMyTurn, verify } from "./whose-turn-is-it.js";
 
-let movingMode: "drag" | "click" = "click"
-let mousePosition: Point = { x: 0, y: 0 }
 let closestHintField: Field | null = null
 
 let movingTile: Tile | null = null
@@ -26,18 +24,8 @@ let hoveredTile: Tile | null = null
 export { closestHintField, movingTile }
 
 export function createTileListeners() {
-    if (movingMode == "drag") {
-        canvas.addEventListener("mousedown", handleInteractionStart)
-        canvas.addEventListener("mouseup", handleInteractionEnd)
-
-        canvas.addEventListener("touchstart", handleInteractionStart)
-        canvas.addEventListener("touchend", handleInteractionEnd)
-    } else {
-        canvas.addEventListener("click", handleMouseClick)
-    }
-
+    canvas.addEventListener("click", handleMouseClick)
     canvas.addEventListener("mousemove", handleMove)
-    canvas.addEventListener("touchmove", handleMove)
     canvas.addEventListener("contextmenu", cancelEvent)
 }
 
@@ -45,39 +33,20 @@ export function createHintRenderer() {
     renderObjects.push(new HintRenderer())
 }
 
-export function removeListeners() {
-    canvas.removeEventListener("mousemove", handleMove)
-    canvas.removeEventListener("mousedown", handleInteractionStart)
-    canvas.removeEventListener("mouseup", handleInteractionEnd)
-    canvas.removeEventListener("mouseclick", handleMouseClick)
-
-    canvas.removeEventListener("touchstart", handleInteractionStart)
-    canvas.removeEventListener("touchend", handleInteractionEnd)
-    canvas.removeEventListener("touchmove", handleMove)
-
-    canvas.removeEventListener("contextmenu", cancelEvent)
-}
-
-function handleMove(event: MouseEvent | TouchEvent) {
+function handleMove(event: MouseEvent) {
     const point = parseTouchOrMouse(event)
-    mousePosition = point
 
     if (movingTile != null) {
-        const absPos = movingMode == "drag" ? movingTile.dragPosition!! : mousePosition
-        const relPos = gameBoardRenderer.relativeToCenter(absPos)
+        const relPos = gameBoardRenderer.relativeToCenter(point)
 
         closestHintField = gameBoard.getClosestField(relPos)
         if (closestHintField && (!canMoveTileToField(movingTile!!, closestHintField) || !verify(movingTile!!, closestHintField)))
             closestHintField = null
 
-        if (movingMode == "drag") {
-            movingTile.dragPosition = point
+        if (closestHintField != null) {
+            canvas.style.cursor = "pointer"
         } else {
-            if (closestHintField != null) {
-                canvas.style.cursor = "pointer"
-            } else {
-                canvas.style.cursor = "default"
-            }
+            canvas.style.cursor = "default"
         }
 
         draw()
@@ -108,36 +77,6 @@ function handleMove(event: MouseEvent | TouchEvent) {
                 ctx.fillText(dbg, x, y)
             }
         }
-    }
-}
-
-function handleInteractionStart(event: MouseEvent | TouchEvent) {
-    if ("button" in event && event.button != 0) return
-    if (!isMyTurn()) return
-
-    const point = parseTouchOrMouse(event)
-    const relativePoint = gameBoardRenderer.relativeToCenter(point)
-    const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
-
-    if (hovered != null) {
-        setDraggingTile(hovered, point)
-        clearHoveredTile()
-    }
-}
-
-function handleInteractionEnd(event: MouseEvent) {
-    if ("button" in event && event.button != 0) return
-
-    if (movingTile != null) {
-        const relative = gameBoardRenderer.relativeToCenter(movingTile.dragPosition!!)
-        const field = gameBoard.getClosestField(relative)
-
-        if (field != null) {
-            tryTileMove(movingTile, field)
-        }
-
-        clearDraggingTile()
-        draw()
     }
 }
 
@@ -180,22 +119,6 @@ function clearHoveredTile() {
     if (hoveredTile != null) {
         hoveredTile.endHover()
         hoveredTile = null
-    }
-}
-
-function setDraggingTile(newTile: Tile, dragPosition: Point) {
-    clearDraggingTile()
-
-    movingTile = newTile
-    movingTile.isBeingDragged = true
-    movingTile.dragPosition = dragPosition
-}
-
-function clearDraggingTile() {
-    if (movingTile != null) {
-        movingTile.isBeingDragged = false
-        movingTile.dragPosition = null
-        movingTile = null
     }
 }
 
