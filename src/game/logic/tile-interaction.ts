@@ -12,7 +12,6 @@ import { myTiles } from "../../shared/logic/lineup.js";
 import { canMoveTileToField } from "../../shared/logic/tile-moves.js";
 import { cancelEvent } from "../utils/events.js";
 import Field from "../../shared/logic/field.js";
-import { HintRenderer } from "../objects/hint-renderer.js";
 import { emitMoveTile } from "../client-core.js";
 import { isMyTurn, verify } from "./whose-turn-is-it.js";
 
@@ -27,10 +26,6 @@ export function createTileListeners() {
     canvas.addEventListener("click", handleClick)
     canvas.addEventListener("mousemove", handleMove)
     canvas.addEventListener("contextmenu", cancelEvent)
-}
-
-export function createHintRenderer() {
-    renderObjects.push(new HintRenderer())
 }
 
 function handleMove(event: MouseEvent) {
