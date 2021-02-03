@@ -7,14 +7,15 @@ import {
     shadowGradientOuterRadius, shadowOffsetX, shadowOffsetY, outerBorder, innerBorder, lineStroke
 } from "../../shared/utils/dimensions.js";
 import Point, { subtract } from "../../shared/utils/point.js";
+import { offsetX, offsetY } from "../logic/camera.js";
 
 export default class GameBoardRender extends RenderObject {
     public center: Point
 
     render = () => {
         this.center = {
-            x: canvas.width / 2,
-            y: canvas.height / 2
+            x: canvas.width / 2 + offsetX,
+            y: canvas.height / 2 + offsetY
         }
 
         this.drawDecoration()

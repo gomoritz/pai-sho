@@ -20,7 +20,7 @@ let closestHintField: Field | null = null
 let movingTile: Tile | null = null
 let hoveredTile: Tile | null = null
 
-export { closestHintField, movingTile }
+export { closestHintField, movingTile, hoveredTile }
 
 export function createTileListeners() {
     canvas.addEventListener("click", handleClick)

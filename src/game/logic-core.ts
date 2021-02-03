@@ -3,6 +3,7 @@ import { buildLineup } from "../shared/logic/lineup.js";
 import { createTileListeners } from "./logic/tile-interaction.js"
 import { renderObjects } from "./render-core.js";
 import TileRenderer from "./objects/tile-renderer.js";
+import { createCameraListeners } from "./logic/camera.js";
 
 export const gameBoard = new GameBoard()
 
@@ -17,4 +18,5 @@ export function initLogic() {
     })
 
     createTileListeners()
+    createCameraListeners()
 }
