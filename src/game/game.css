@@ -152,6 +152,7 @@ body {
     color: #FFFFFF;
     font-weight: 600;
     text-shadow: 0 0 5px #000;
+    pointer-events: none;
 }
 
 .action-bar-animation {
