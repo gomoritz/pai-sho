@@ -50,7 +50,7 @@ export function canPerformJump(tile: Tile, origin: Field, target: Field): boolea
 
 export function calculateAllPossibleMoves(tile: Tile): Field[] {
     const fields: Field[] = []
-    for (let field of Object.values(tile.gameBoard.fields)) {
+    for (let field of Object.values(tile.gameBoard?.fields ?? {})) {
         if (canMoveTileToField(tile, field) && !canPerformJump(tile, tile.field!!, field)) {
             fields.push(field)
         }
@@ -66,7 +66,7 @@ function findPossibleJumpsAndChainJumps(tile: Tile): Field[] {
 }
 
 function findPossibleJumpsAndChainJumpsRecursively(tile: Tile, origin: Field, collection: Field[]) {
-    const allFields = Object.values(tile.gameBoard.fields)
+    const allFields = Object.values(tile.gameBoard?.fields ?? {})
 
     for (let field of allFields) {
         if (collection.indexOf(field) != -1) continue

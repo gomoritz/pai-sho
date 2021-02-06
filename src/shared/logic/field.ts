@@ -6,7 +6,7 @@ import GameBoard from "./game-board.js";
 export default class Field {
     public tile: Tile | null = null
 
-    constructor(private gameBoard: GameBoard, public x: number, public y: number) {
+    constructor(public gameBoard: GameBoard, public x: number, public y: number) {
     }
 
     /**

@@ -11,7 +11,6 @@ export abstract class Tile {
     public isThrown = false
 
     public renderer: TileRenderer
-    public gameBoard: GameBoard
 
     public isHovered: boolean = false
     public isClicked: boolean = false;
@@ -86,6 +85,10 @@ export abstract class Tile {
 
     getFieldsForPossibleMoves() {
         return calculateAllPossibleMoves(this)
+    }
+
+    get gameBoard() {
+        return this.field?.gameBoard
     }
 
     abstract canThrow(other: Tile): boolean
