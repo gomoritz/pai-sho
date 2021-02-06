@@ -3,7 +3,7 @@ import { draw } from "../game.js";
 import Field from "../../shared/logic/field.js";
 import { gameBoard } from "../logic-core.js";
 import { emitPassChainJump } from "../client-core.js";
-import { LotusTile, Tile } from "../../shared/logic/tiles.js";
+import { Tile } from "../../shared/logic/tiles.js";
 import { GameStartPacket } from "../../shared/events/game-start.js";
 import { WhoseTurnPacket } from "../../shared/events/whose-turn.js";
 import { InCheckPacket } from "../../shared/events/in-check.js";
@@ -51,7 +51,7 @@ export function setInCheck(packet: InCheckPacket) {
 }
 
 export function verify(tile: Tile, field: Field): boolean {
-    return verifyChainJumps(tile, field) && verifyCheck(tile, field)
+    return verifyChainJumps(tile, field)
 }
 
 /**
@@ -61,15 +61,6 @@ export function verify(tile: Tile, field: Field): boolean {
  */
 function verifyChainJumps(tile: Tile, field: Field): boolean {
     return chainJumps == null || (chainJumps.some(cj => field.equals(cj)) && tile.id == tileWhichChainJumps)
-}
-
-/**
- * If the player is in check, this function forces the player to move the lotus
- * tile out of check.
- */
-function verifyCheck(tile: Tile, field: Field): boolean {
-    if (!isInCheck()) return true
-    return tile instanceof LotusTile && !field.wouldBeInCheck(tile)
 }
 
 function showPlayAgain() {
