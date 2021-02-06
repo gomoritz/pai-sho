@@ -16,15 +16,38 @@ function zoom(value: number) {
     setCanvasDimensions()
 }
 
-function shift(x: number, y: number) {
+const background = document.getElementById("background-image") as HTMLImageElement
+
+export function shift(x: number, y: number) {
     offsetX += x
     offsetY += y
 
-    offsetX = Math.min(offsetX, canvas.width / 2)
-    offsetX = Math.max(offsetX, -canvas.width / 2)
+    const minOffsetX = -canvas.width / 2 * scale + gameBoardRadius / scale;
+    const maxOffsetX = canvas.width / 2 * scale - gameBoardRadius / scale;
+    offsetX = Math.max(Math.min(offsetX, maxOffsetX), minOffsetX)
 
-    offsetY = Math.min(offsetY, canvas.height / 2)
-    offsetY = Math.max(offsetY, -canvas.height / 2)
+    const minOffsetY = -canvas.height / 2 * scale + gameBoardRadius / scale;
+    const maxOffsetY = canvas.height / 2 * scale - gameBoardRadius / scale;
+    offsetY = Math.max(Math.min(offsetY, maxOffsetY), minOffsetY)
+
+    const ratio = background.naturalWidth / background.naturalHeight
+    let bgWidth = window.innerWidth + (2 * maxOffsetX)
+    let bgHeight = window.innerHeight + (2 * maxOffsetY)
+
+    if (bgWidth > bgHeight) {
+        bgHeight = (1/ratio) * bgWidth
+    } else {
+        bgWidth = ratio * bgHeight
+    }
+
+    const bgOverflowX = (bgWidth - window.innerWidth) / 2
+    const bgOverflowY = (bgHeight - window.innerHeight) / 2
+
+    background.width = bgWidth
+    background.height = bgHeight
+
+    background.style.left = `${-bgOverflowX + offsetX * 0.9}px`
+    background.style.top = `${-bgOverflowY + offsetY * 0.9}px`
 
     draw()
 }
@@ -47,7 +70,7 @@ function updateZoom(event: WheelEvent) {
 
 function updatePosition(event: MouseEvent) {
     if (isShifting) {
-        shift(event.movementX, event.movementY)
+        shift(event.movementX * 0.8, event.movementY * 0.8)
     }
 }
 

@@ -2,7 +2,7 @@ import { renderCanvas } from "./render-core.js";
 import { initLogic } from "./logic-core.js";
 import { connectToServer } from "./client-core.js";
 import { updateScale } from "../shared/utils/dimensions.js";
-import { zoomLevel } from "./logic/camera.js";
+import { shift, zoomLevel } from "./logic/camera.js";
 
 export const canvas = document.getElementById("main-canvas") as HTMLCanvasElement
 export const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!!
@@ -19,6 +19,7 @@ export function setCanvasDimensions() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
+    shift(0, 0)
     draw()
 }
 
