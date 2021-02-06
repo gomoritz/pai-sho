@@ -1,19 +1,28 @@
 import { canvas, draw, setCanvasDimensions } from "../game.js";
 import { hoveredTile } from "./tile-interaction.js";
 import { gameBoardRadius, scale } from "../../shared/utils/dimensions.js";
+import Animation from "../utils/animation.js";
 
 let isShifting: boolean = false
 
+export let targetLevel = 100
 export let zoomLevel = 100
 export let offsetX = 0
 export let offsetY = 0
 
-function zoom(value: number) {
-    zoomLevel += value
-    zoomLevel = Math.min(zoomLevel, 250)
-    zoomLevel = Math.max(zoomLevel, 100)
+let zoomAnimation: Animation | null = null
 
-    setCanvasDimensions()
+function zoom(value: number) {
+    targetLevel = Math.min(Math.max(targetLevel + value, 100), 250)
+    zoomAnimation = new Animation(
+        zoomAnimation?.stop() ?? zoomLevel,
+        targetLevel,
+        Math.abs(targetLevel - zoomLevel) / 50,
+        1
+    ).withCallback((value) => {
+        zoomLevel = value
+        setCanvasDimensions()
+    }).start()
 }
 
 const background = document.getElementById("background-image") as HTMLImageElement
@@ -64,7 +73,7 @@ function updateZoom(event: WheelEvent) {
     event.preventDefault()
     event.stopPropagation()
 
-    const amount = event.deltaY < 0 ? 10 : -10
+    const amount = event.deltaY < 0 ? 20 : -20
     zoom(amount)
 }
 
