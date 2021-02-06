@@ -5,8 +5,8 @@
 
 import { Tile } from "../../shared/logic/tiles.js";
 import { canvas, ctx, draw, isDebug } from "../game.js";
-import { gameBoardRenderer, renderObjects } from "../render-core.js";
-import Point from "../../shared/utils/point.js";
+import { gameBoardRenderer } from "../render-core.js";
+import Point, { add, distanceBetween } from "../../shared/utils/point.js";
 import { gameBoard } from "../logic-core.js";
 import { myTiles } from "../../shared/logic/lineup.js";
 import { canMoveTileToField } from "../../shared/logic/tile-moves.js";
@@ -59,18 +59,27 @@ function handleMove(event: MouseEvent) {
             setCursor(event, "pointer")
             setHoveredTile(hovered)
             draw()
+        }
+    }
 
-            if (isDebug) {
-                const { x, y } = { x: point.x + 15, y: point.y + 30 }
+    if (isDebug) {
+        const { x, y } = { x: point.x + 15, y: point.y + 30 }
+        const nearestField = Object.values(gameBoard.fields)
+            .find(it => distanceBetween(add(gameBoardRenderer.center, it.translateToPoint()!!), point) < 25)
 
-                const dbg = `${hovered.constructor.name}[${hovered.field!!.x},${hovered.field!!.y}]`;
-                ctx.font = "bold 16px monospace"
-                ctx.fillStyle = "#000000FF"
-                ctx.fillRect(x, y - 16, ctx.measureText(dbg).width, 20)
-
-                ctx.fillStyle = "#FFFFFFFF"
-                ctx.fillText(dbg, x, y)
+        if (nearestField) {
+            draw()
+            let dbg = `[${nearestField.x};${nearestField.y}]`;
+            if (nearestField.tile) {
+                dbg = nearestField.tile.id + dbg
             }
+
+            ctx.font = "bold 16px monospace"
+            ctx.fillStyle = "#000000FF"
+            ctx.fillRect(x, y - 16, ctx.measureText(dbg).width, 20)
+
+            ctx.fillStyle = "#FFFFFFFF"
+            ctx.fillText(dbg, x, y)
         }
     }
 }
