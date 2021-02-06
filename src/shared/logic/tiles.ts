@@ -4,12 +4,14 @@ import GameBoard from "./game-board.js";
 import TileRenderer from "../../game/objects/tile-renderer.js";
 import { myTiles, opponentTiles } from "./lineup.js";
 import { tileSize } from "../utils/dimensions.js";
+import { calculateAllPossibleMoves } from "./tile-moves.js";
 
 export abstract class Tile {
     public field: Field | null
     public isThrown = false
 
     public renderer: TileRenderer
+    public gameBoard: GameBoard
 
     public isHovered: boolean = false
     public isClicked: boolean = false;
@@ -62,6 +64,29 @@ export abstract class Tile {
         return this.id
     }
 
+    getTilesWhichCouldThrow(): Tile[] {
+        const candidates = this.isDark ? myTiles : opponentTiles
+        const result: Tile[] = []
+
+        for (let tile of candidates) {
+            const possibleFields = tile.getFieldsForPossibleMoves()
+            for (let field of possibleFields) {
+                const throws = field.getNeighbourFields().filter(other => other.tile != null
+                        && other.tile == this && other.tile.canThrow(this))
+
+                if (throws.length > 0) {
+                    result.push(tile)
+                    break
+                }
+            }
+        }
+
+        return result
+    }
+
+    getFieldsForPossibleMoves() {
+        return calculateAllPossibleMoves(this)
+    }
 
     abstract canThrow(other: Tile): boolean
 }
@@ -75,20 +100,23 @@ export class LotusTile extends Tile {
         return false;
     }
 
-    isInCheck(): boolean {
+    getTileByWhichInCheck(): Tile | null {
         return this.field?.getNeighbourFields()
-            .some(field => field.tile != null && field.tile.isDark != this.isDark)
-            ?? false
+            .find(field => field.tile != null && field.tile.isDark != this.isDark)
+            ?.tile ?? null
     }
 
     isInCheckMate(): boolean {
-        return this.field?.getNeighbourFields()
-            .every(field => field.tile != null || field.wouldBeInCheck(this))
-            ?? false
+        const checkBy = this.getTileByWhichInCheck();
+        if (checkBy == null) return false
+
+        const canEscape = this.field?.getNeighbourFields().every(field => field.tile == null && !field.wouldBeInCheck(this)) ?? true;
+        const canThrowOpponent = (checkBy.getTilesWhichCouldThrow()?.length ?? []) > 0
+        return !canEscape && !canThrowOpponent
     }
 
     bringsVictory(): boolean {
-        return this.field?.x == 0 && this.field.y == 0 && !this.isInCheck()
+        return this.field?.x == 0 && this.field.y == 0 && this.getTileByWhichInCheck() == null
     }
 }
 
