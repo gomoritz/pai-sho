@@ -8,19 +8,6 @@
       <link rel="stylesheet" href="game.css">
    </head>
    <body>
-      <div id="main-wrapper">
-         <canvas id="main-canvas">
-            Your browser doesn't support this game.
-         </canvas>
-      </div>
-
-      <button id="pass-chain-jump">Pass</button>
-      <div id="overlay">
-         <h1 id="overlay-text">Waiting for room to be filled...</h1>
-      </div>
-
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="./game.js" type="module"></script>
       <div id="images" style="display: none">
          <img src="../resources/lotus.png" alt="" id="lotus">
          <img src="../resources/lotus__dark.png" alt="" id="lotus__dark">
@@ -40,5 +27,19 @@
          <img src="../resources/water.png" alt="" id="water">
          <img src="../resources/water__dark.png" alt="" id="water__dark">
       </div>
+
+      <div id="main-wrapper">
+         <canvas id="main-canvas">
+            Your browser doesn't support this game.
+         </canvas>
+      </div>
+
+      <button id="pass-chain-jump">Pass</button>
+      <div id="overlay">
+         <h1 id="overlay-text">Waiting for room to be filled...</h1>
+      </div>
+
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="./game.js" type="module"></script>
    </body>
 </html>
