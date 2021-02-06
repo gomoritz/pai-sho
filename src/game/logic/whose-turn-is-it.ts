@@ -7,6 +7,7 @@ import { Tile } from "../../shared/logic/tiles.js";
 import { GameStartPacket } from "../../shared/events/game-start.js";
 import { WhoseTurnPacket } from "../../shared/events/whose-turn.js";
 import { InCheckPacket } from "../../shared/events/in-check.js";
+import { showWhoseTurn } from "../utils/user-interface.js";
 
 const passButton = document.getElementById("pass-chain-jump") as HTMLButtonElement
 passButton.addEventListener("click", () => emitPassChainJump())
@@ -36,6 +37,7 @@ export function setIsMyTurn(packet: WhoseTurnPacket | GameStartPacket, isGameSta
         }
     } else {
         myTurn = packet.myTurn
+        showWhoseTurn(myTurn)
 
         chainJumps = null
         tileWhichChainJumps = null

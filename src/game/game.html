@@ -30,13 +30,15 @@
 
       <div id="main-wrapper">
          <canvas id="main-canvas">
-            Your browser doesn't support this game.
+            Dein Browser unterstützt dieses Spiel leider nicht.
          </canvas>
       </div>
 
       <button id="pass-chain-jump">Pass</button>
+      <div class="name-tag name-tag-hidden" id="my-name"></div>
+      <div class="name-tag name-tag-hidden" id="opponent-name"></div>
       <div id="overlay">
-         <h1 id="overlay-text">Waiting for room to be filled...</h1>
+         <h1 id="overlay-text">Warte auf anderen Spieler...</h1>
       </div>
 
       <script src="/socket.io/socket.io.js"></script>

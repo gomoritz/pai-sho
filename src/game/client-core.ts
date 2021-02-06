@@ -7,7 +7,7 @@ import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
 import { myTiles, opponentTiles, respawnAvatar } from "../shared/logic/lineup.js";
-import { hideOverlay, showOverlay } from "./utils/overlay.js";
+import { hideOverlay, setNames, showOverlay } from "./utils/user-interface.js";
 import { GameStartEvent, GameStartPacket } from "../shared/events/game-start.js";
 import { GameAbandonEvent } from "../shared/events/game-abandon.js";
 import { GameEndEvent, GameEndPacket } from "../shared/events/game-end.js";
@@ -70,8 +70,9 @@ clientIO.on(TileMoveResponseEvent, (packet: TileMoveResponsePacket) => {
 
 clientIO.on(GameStartEvent, (packet: GameStartPacket) => {
     renderObjects.push(new DebugGameOverview(packet))
-    setIsMyTurn(packet, true)
     hideOverlay()
+    setNames(packet)
+    setIsMyTurn(packet, true)
 })
 
 clientIO.on(GameEndEvent, (packet: GameEndPacket) => {

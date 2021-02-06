@@ -8,7 +8,7 @@ import {
     innerTrianglesHeight,
     lineGap,
     lineStroke,
-    outerBorder,
+    outerBorder, scale,
     shadowGradientInnerRadius,
     shadowGradientOuterRadius,
     shadowOffsetX,
