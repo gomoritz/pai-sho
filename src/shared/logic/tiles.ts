@@ -72,7 +72,7 @@ export abstract class Tile {
             const possibleFields = tile.getFieldsForPossibleMoves()
             for (let field of possibleFields) {
                 const throws = field.getNeighbourFields().filter(other => other.tile != null
-                        && other.tile == this && other.tile.canThrow(this))
+                    && other.tile == this && other.tile.canThrow(this))
 
                 if (throws.length > 0) {
                     result.push(tile)

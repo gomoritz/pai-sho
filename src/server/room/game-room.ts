@@ -1,6 +1,6 @@
 import Player from "../objects/player.js";
 import PaiShoGame from "../game/pai-sho-game.js";
-import { TileMovePacket, TileMoveEvent } from "../../shared/events/tile-move.js";
+import { TileMoveEvent, TileMovePacket } from "../../shared/events/tile-move.js";
 import { PassChainJumpEvent } from "../../shared/events/pass-chain-jump.js";
 
 export default class GameRoom {

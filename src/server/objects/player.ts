@@ -5,5 +5,6 @@ export default class Player {
     public secondTimeInCheck: boolean = false
     public lostAvatar: boolean = false
 
-    constructor(public username: string, public socket: Socket) {}
+    constructor(public username: string, public socket: Socket) {
+    }
 }

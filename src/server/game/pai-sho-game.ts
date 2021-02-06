@@ -6,13 +6,13 @@ import { canMoveTileToField, canPerformJump } from "../../shared/logic/tile-move
 import { LotusTile, Tile } from "../../shared/logic/tiles.js";
 import Field from "../../shared/logic/field.js";
 import { serverIO } from "../socket.js";
-import { GameStartPacket, GameStartEvent } from "../../shared/events/game-start.js";
+import { GameStartEvent, GameStartPacket } from "../../shared/events/game-start.js";
 import { GameAbandonEvent } from "../../shared/events/game-abandon.js";
-import { GameEndPacket, GameEndEvent } from "../../shared/events/game-end.js";
-import { WhoseTurnPacket, WhoseTurnEvent } from "../../shared/events/whose-turn.js";
-import { ThrownTile, ThrowTilesPacket, ThrowTilesEvent } from "../../shared/events/throw-tiles.js";
-import { TileMovePacket, TileMoveResponsePacket, TileMoveResponseEvent } from "../../shared/events/tile-move.js";
-import { InCheckPacket, InCheckEvent } from "../../shared/events/in-check.js";
+import { GameEndEvent, GameEndPacket } from "../../shared/events/game-end.js";
+import { WhoseTurnEvent, WhoseTurnPacket } from "../../shared/events/whose-turn.js";
+import { ThrownTile, ThrowTilesEvent, ThrowTilesPacket } from "../../shared/events/throw-tiles.js";
+import { TileMovePacket, TileMoveResponseEvent, TileMoveResponsePacket } from "../../shared/events/tile-move.js";
+import { InCheckEvent, InCheckPacket } from "../../shared/events/in-check.js";
 import { RespawnAvatarEvent, RespawnAvatarPacket } from "../../shared/events/respawn-avatar.js";
 
 export default class PaiShoGame {

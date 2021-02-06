@@ -62,7 +62,7 @@ export default class Field {
             this.getRelativeField(Direction.BOTTOM_RIGHT),
             this.getRelativeField(Direction.BOTTOM),
             this.getRelativeField(Direction.BOTTOM_LEFT),
-            this.getRelativeField( Direction.LEFT),
+            this.getRelativeField(Direction.LEFT),
             this.getRelativeField(Direction.TOP_LEFT),
         ].filter(it => it != null).map(it => it!!)
     }

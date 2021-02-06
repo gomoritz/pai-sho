@@ -8,13 +8,13 @@ import { gameBoardRenderer } from "../render-core.js";
 export default class DebugGameOverview extends RenderObject {
     private static instance: DebugGameOverview
 
-    public static getInstance(): DebugGameOverview {
-        return this.instance
-    }
-
     constructor(public state: GameStartPacket) {
         super();
         DebugGameOverview.instance = this
+    }
+
+    public static getInstance(): DebugGameOverview {
+        return this.instance
     }
 
     render = (): void => {
@@ -37,7 +37,7 @@ export default class DebugGameOverview extends RenderObject {
         if (movingTile != null) {
             movingTile.getFieldsForPossibleMoves().forEach(field => {
                 const point = add(gameBoardRenderer.center, field.translateToPoint()!!)
-                ctx.fillStyle = "#e10ebf"
+                ctx.fillStyle = "#E10EBF"
                 ctx.beginPath()
                 ctx.arc(point.x, point.y, 4, 0, Math.PI * 2)
                 ctx.fill()
@@ -45,7 +45,7 @@ export default class DebugGameOverview extends RenderObject {
 
             movingTile.getTilesWhichCouldThrow().forEach(tile => {
                 const point = add(gameBoardRenderer.center, tile.field!!.translateToPoint()!!)
-                ctx.fillStyle = "#e1580e"
+                ctx.fillStyle = "#E1580E"
                 ctx.beginPath()
                 ctx.arc(point.x, point.y, 4, 0, Math.PI * 2)
                 ctx.fill()

@@ -3,8 +3,16 @@ import { canvas, ctx, isDebug } from "../game.js";
 import { brown, red, white } from "../utils/colors.js";
 import { drawTriangle } from "../shapes/triangle.js";
 import {
-    innerTrianglesHeight, gameBoardRadius, lineGap, shadowGradientInnerRadius,
-    shadowGradientOuterRadius, shadowOffsetX, shadowOffsetY, outerBorder, innerBorder, lineStroke
+    gameBoardRadius,
+    innerBorder,
+    innerTrianglesHeight,
+    lineGap,
+    lineStroke,
+    outerBorder,
+    shadowGradientInnerRadius,
+    shadowGradientOuterRadius,
+    shadowOffsetX,
+    shadowOffsetY
 } from "../../shared/utils/dimensions.js";
 import Point, { subtract } from "../../shared/utils/point.js";
 import { offsetX, offsetY } from "../logic/camera.js";
@@ -121,7 +129,7 @@ export default class GameBoardRender extends RenderObject {
             red)
         drawTriangle(
             { x: x - innerTrianglesHeight, y: y - innerTrianglesHeight },
-            { x: x - innerTrianglesHeight, y: y - innerTrianglesHeight * 2},
+            { x: x - innerTrianglesHeight, y: y - innerTrianglesHeight * 2 },
             { x: x - innerTrianglesHeight * 2, y: y - innerTrianglesHeight },
             red)
     }
