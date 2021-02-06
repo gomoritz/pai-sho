@@ -49,11 +49,16 @@ const actionBarElement = document.getElementById("action-bar")!!
 export function showActionBar(text: string) {
     actionBarElement.innerText = ""
     actionBarElement.classList.remove("action-bar-animation")
+    actionBarElement.style.display = "block"
 
     setTimeout(() => {
         actionBarElement.innerText = text
         actionBarElement.classList.add("action-bar-animation")
     }, 100)
+
+    setTimeout(() => {
+        actionBarElement.style.display = "none"
+    }, 1500)
 }
 
 export function showGameEnd(win: boolean) {
