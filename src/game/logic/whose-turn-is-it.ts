@@ -31,10 +31,10 @@ export function setIsMyTurn(packet: WhoseTurnPacket | GameStartPacket, isGameSta
         const wte = packet as WhoseTurnPacket;
         if (wte.chainJumps) {
             showPlayAgain()
-            showActionBar("Springe nochmal!")
             chainJumps = wte.chainJumps.map(obj => gameBoard.getField(obj.x, obj.y)!!)
             tileWhichChainJumps = wte.tileWhichChainJumps!!
-            passButton.style.opacity = "1"
+            passButton.style.display = "block"
+            passButton.classList.add("pass-chain-shown")
         }
     } else {
         myTurn = packet.myTurn
@@ -42,7 +42,8 @@ export function setIsMyTurn(packet: WhoseTurnPacket | GameStartPacket, isGameSta
 
         chainJumps = null
         tileWhichChainJumps = null
-        passButton.style.opacity = "0"
+        passButton.classList.remove("pass-chain-shown")
+        setTimeout(() => passButton.style.display = "block", 300)
 
         DebugGameOverview.getInstance().state.myTurn = myTurn
         draw()
@@ -67,5 +68,6 @@ function verifyChainJumps(tile: Tile, field: Field): boolean {
 }
 
 function showPlayAgain() {
-    console.log("You can play again!")
+    // only show the first time
+    if (chainJumps == null) showActionBar("Springe nochmal!")
 }
