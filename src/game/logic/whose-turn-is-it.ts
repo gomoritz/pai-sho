@@ -52,6 +52,7 @@ export function setIsMyTurn(packet: WhoseTurnPacket | GameStartPacket, isGameSta
 
 export function setInCheck(packet: InCheckPacket) {
     inCheck = packet.inCheck
+    draw()
 }
 
 export function verify(tile: Tile, field: Field): boolean {
