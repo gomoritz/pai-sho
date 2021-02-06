@@ -98,8 +98,9 @@ export default class PaiShoGame {
 
         console.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
 
-        this.checkForInCheck()
         const isThrown = this.checkForThrows(tile)
+        // must be called after checkForGameEnd()
+        this.checkForInCheck()
         const gameEnds = this.checkForGameEnd()
         if (gameEnds) return console.log("Game is ending")
 
@@ -178,18 +179,15 @@ export default class PaiShoGame {
         const lotusA = myTiles.find(it => it.id == "lotus") as LotusTile
         const lotusB = opponentTiles.find(it => it.id == "lotus") as LotusTile
 
-        const nowA = lotusA.isInCheck()
-        const nowB = lotusB.isInCheck()
+        for (let player of this.room.allPlayers) {
+            const prev = player.inCheck
+            const now = !!(player == this.room.playerA ? lotusA : lotusB).getTileByWhichInCheck()
 
-        if (this.room.playerA!!.inCheck != nowA) {
-            this.room.playerA!!.socket.emit(InCheckEvent, { inCheck: nowA } as InCheckPacket)
-        }
-        if (this.room.playerB!!.inCheck != nowB) {
-            this.room.playerB!!.socket.emit(InCheckEvent, { inCheck: nowB } as InCheckPacket)
-        }
+            if (prev && now) player.secondTimeInCheck = true
+            if (prev != now) player.socket.emit(InCheckEvent, { inCheck: now } as InCheckPacket)
 
-        this.room.playerA!!.inCheck = lotusA.isInCheck()
-        this.room.playerB!!.inCheck = lotusB.isInCheck()
+            player.inCheck = now
+        }
     }
 
     checkForGameEnd(): boolean {
@@ -198,9 +196,9 @@ export default class PaiShoGame {
 
         let winner: Player
 
-        if (lotusA.bringsVictory() || lotusB.isInCheckMate()) {
+        if (this.room.playerB!!.secondTimeInCheck || lotusA.bringsVictory() || lotusB.isInCheckMate()) {
             winner = this.room.playerA!!
-        } else if (lotusB.bringsVictory() || lotusA.isInCheckMate()) {
+        } else if (this.room.playerA!!.secondTimeInCheck || lotusB.bringsVictory() || lotusA.isInCheckMate()) {
             winner = this.room.playerB!!
         } else return false
 
