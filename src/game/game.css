@@ -121,16 +121,18 @@ body {
     transform: translateX(-50%);
 }
 
-.my-name-hidden {
+#my-name.name-tag-hidden {
     transform: translateX(-50%) translateY(100%) !important;
 }
-
-.opponent-name-shown {
+#opponent-name.name-tag-hidden {
     transform: translateX(-50%) translateY(-100%) !important;
 }
 
-.their-turn {
-    transform: translateX(-50%) scale(1.3) !important;
+#my-name.their-turn {
+    transform: translateX(-50%) translateY(-10%) scale(1.2) !important;
+}
+#opponent-name.their-turn {
+    transform: translateX(-50%) translateY(10%) scale(1.2) !important;
 }
 
 #action-bar {

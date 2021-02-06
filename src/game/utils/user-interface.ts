@@ -27,10 +27,10 @@ export function setNames(packet: GameStartPacket) {
     opponentName = packet.role == "a" ? packet.players.b : packet.players.a
 
     myNameElement.innerText = myName
-    myNameElement.classList.remove("my-name-hidden")
+    myNameElement.classList.remove("name-tag-hidden")
 
     opponentNameElement.innerText = opponentName
-    opponentNameElement.classList.remove("opponent-name-hidden")
+    opponentNameElement.classList.remove("name-tag-hidden")
 }
 
 export function showWhoseTurn(my: boolean) {
