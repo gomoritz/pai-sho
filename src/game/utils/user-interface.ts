@@ -55,3 +55,25 @@ export function showActionBar(text: string) {
         actionBarElement.classList.add("action-bar-animation")
     }, 100)
 }
+
+export function showGameEnd(win: boolean) {
+    if (win) {
+        showOverlay("Du hast gewonnen!")
+        // @ts-ignore
+        confetti({
+            particleCount: 200,
+            spread: 90,
+            angle: 45,
+            origin: { x: 0, y: 1 },
+        });
+        // @ts-ignore
+        confetti({
+            particleCount: 200,
+            spread: 90,
+            angle: 135,
+            origin: { x: 1, y: 1 },
+        });
+    } else {
+        showOverlay("Du hast verloren!")
+    }
+}
