@@ -7,7 +7,7 @@ import { Tile } from "../../shared/logic/tiles.js";
 import { GameStartPacket } from "../../shared/events/game-start.js";
 import { WhoseTurnPacket } from "../../shared/events/whose-turn.js";
 import { InCheckPacket } from "../../shared/events/in-check.js";
-import { showWhoseTurn } from "../utils/user-interface.js";
+import { showActionBar, showWhoseTurn } from "../utils/user-interface.js";
 
 const passButton = document.getElementById("pass-chain-jump") as HTMLButtonElement
 passButton.addEventListener("click", () => emitPassChainJump())
@@ -31,6 +31,7 @@ export function setIsMyTurn(packet: WhoseTurnPacket | GameStartPacket, isGameSta
         const wte = packet as WhoseTurnPacket;
         if (wte.chainJumps) {
             showPlayAgain()
+            showActionBar("Springe nochmal!")
             chainJumps = wte.chainJumps.map(obj => gameBoard.getField(obj.x, obj.y)!!)
             tileWhichChainJumps = wte.tileWhichChainJumps!!
             passButton.style.opacity = "1"

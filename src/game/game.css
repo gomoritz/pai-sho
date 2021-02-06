@@ -132,3 +132,33 @@ body {
 .their-turn {
     transform: translateX(-50%) scale(1.3) !important;
 }
+
+#action-bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    color: #FFFFFF;
+    font-weight: 600;
+    text-shadow: 0 0 5px #000;
+}
+
+.action-bar-animation {
+    animation: animate-action-bar 1.3s ease-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes animate-action-bar {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    10% { opacity: 1; }
+    50% { opacity: 1; }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(4.5);
+        letter-spacing: .5em;
+    }
+}

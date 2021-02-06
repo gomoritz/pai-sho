@@ -37,8 +37,21 @@ export function showWhoseTurn(my: boolean) {
     if (my) {
         myNameElement.classList.add("their-turn")
         opponentNameElement.classList.remove("their-turn")
+        showActionBar("Du bist dran!")
     } else {
         opponentNameElement.classList.add("their-turn")
         myNameElement.classList.remove("their-turn")
     }
+}
+
+const actionBarElement = document.getElementById("action-bar")!!
+
+export function showActionBar(text: string) {
+    actionBarElement.innerText = ""
+    actionBarElement.classList.remove("action-bar-animation")
+
+    setTimeout(() => {
+        actionBarElement.innerText = text
+        actionBarElement.classList.add("action-bar-animation")
+    }, 100)
 }
