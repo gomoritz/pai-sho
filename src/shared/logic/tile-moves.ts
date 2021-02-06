@@ -47,3 +47,34 @@ export function canPerformJump(tile: Tile, origin: Field, target: Field): boolea
 
     return false
 }
+
+export function calculateAllPossibleMoves(tile: Tile): Field[] {
+    const fields: Field[] = []
+    for (let field of Object.values(tile.gameBoard.fields)) {
+        if (canMoveTileToField(tile, field) && !canPerformJump(tile, tile.field!!, field)) {
+            fields.push(field)
+        }
+    }
+    fields.push(...findPossibleJumpsAndChainJumps(tile))
+    return [...new Set(fields)]
+}
+
+function findPossibleJumpsAndChainJumps(tile: Tile): Field[] {
+    const collection: Field[] = [tile.field!!]
+    findPossibleJumpsAndChainJumpsRecursively(tile, tile.field!!, collection)
+    return collection
+}
+
+function findPossibleJumpsAndChainJumpsRecursively(tile: Tile, origin: Field, collection: Field[]) {
+    const allFields = Object.values(tile.gameBoard.fields)
+
+    for (let field of allFields) {
+        if (collection.indexOf(field) != -1) continue
+        if (field.tile != null) continue
+
+        if (canPerformJump(tile, origin, field)) {
+            collection.push(field)
+            findPossibleJumpsAndChainJumpsRecursively(tile, field, collection)
+        }
+    }
+}
