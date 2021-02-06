@@ -51,12 +51,14 @@ function updatePosition(event: MouseEvent) {
     }
 }
 
-function onMouseDown() {
+function onMouseDown(event: MouseEvent) {
+    if (event.button != 0) return
     if (hoveredTile == null) {
         isShifting = true
     }
 }
 
-function onMouseUp() {
+function onMouseUp(event: MouseEvent) {
+    if (event.button != 0) return
     isShifting = false
 }
