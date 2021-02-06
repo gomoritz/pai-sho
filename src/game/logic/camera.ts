@@ -20,21 +20,21 @@ function shift(x: number, y: number) {
     offsetX += x
     offsetY += y
 
-    offsetX = Math.min(offsetX, canvas.width / 2 - gameBoardRadius / scale)
-    offsetX = Math.max(offsetX, -canvas.width / 2 + gameBoardRadius / scale)
+    offsetX = Math.min(offsetX, (canvas.width * scale) / 2 - gameBoardRadius / scale)
+    offsetX = Math.max(offsetX, (-canvas.width * scale) / 2 + gameBoardRadius / scale)
 
-    offsetY = Math.min(offsetY, canvas.height / 2 - gameBoardRadius / scale)
-    offsetY = Math.max(offsetY, -canvas.height / 2 + gameBoardRadius / scale)
+    offsetY = Math.min(offsetY, (canvas.height * scale) / 2 - gameBoardRadius / scale)
+    offsetY = Math.max(offsetY, (-canvas.height * scale) / 2 + gameBoardRadius / scale)
 
     draw()
 }
 
 export function createCameraListeners() {
-    window.addEventListener("mousewheel", updateZoom)
+    canvas.addEventListener("mousewheel", updateZoom)
 
-    window.addEventListener("mousedown", onMouseDown)
-    window.addEventListener("mouseup", onMouseUp)
-    window.addEventListener("mousemove", updatePosition)
+    canvas.addEventListener("mousedown", onMouseDown)
+    canvas.addEventListener("mouseup", onMouseUp)
+    canvas.addEventListener("mousemove", updatePosition)
 }
 
 function updateZoom(event: WheelEvent) {
