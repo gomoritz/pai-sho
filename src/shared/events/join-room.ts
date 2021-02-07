@@ -6,12 +6,6 @@ export interface JoinRoomPacket {
     username: string
 }
 
-export type JoinRoomResponsePacket = JoinRoomResponseSuccess | JoinRoomResponseError
-
-export interface JoinRoomResponseSuccess {
-    success: true
-}
-
-export interface JoinRoomResponseError {
-    success: false
+export interface JoinRoomResponsePacket {
+    success: boolean
 }
