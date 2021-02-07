@@ -8,13 +8,18 @@ import { RoomManager } from "./room-manager.js";
 
 export default class Lobby {
     entities: LobbyEntity[] = []
+    canJoin: boolean = true
 
     constructor(private room: GameRoom) {
     }
 
     addToLobby(socket: Socket, username: string): boolean {
         if (this.entities.length >= 2) return false
-        if (!this.validateName(username)) return false
+        if (!this.canJoin) return false
+
+        if (!this.validateName(username)) {
+            username = "Player" + Math.floor(Math.random() * 899 + 100)
+        }
 
         const entity = new LobbyEntity(socket, username)
         this.entities.push(entity)
@@ -32,7 +37,7 @@ export default class Lobby {
         this.publishLobbyEntities()
         console.log(`${entity.username} left lobby of room ${this.room.id}`)
 
-        if (this.entities.length == 0 && this.room.id != "test") {
+        if (this.entities.length == 0 && this.room.id != "test" && this.canJoin) {
             RoomManager.deleteRoom(this.room)
         }
     }
@@ -59,6 +64,7 @@ export default class Lobby {
 
     startRoom(entity: LobbyEntity) {
         if (this.entities.length != 2) return
+        this.canJoin = false
 
         this.entities.forEach(entity => {
             const gameKey = serializeGameKey({ roomId: this.room.id, username: entity.username })

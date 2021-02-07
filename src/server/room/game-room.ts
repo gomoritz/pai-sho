@@ -12,7 +12,7 @@ export default class GameRoom {
     game: PaiShoGame = new PaiShoGame(this)
     lobby: Lobby = new Lobby(this)
 
-    constructor(public id: string) {
+    constructor(public id: string, public isPrivate: boolean = false) {
     }
 
     addPlayerToGame(player: Player) {

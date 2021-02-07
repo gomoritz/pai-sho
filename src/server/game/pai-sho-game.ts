@@ -42,17 +42,19 @@ export default class PaiShoGame {
     }
 
     abandon() {
-        serverIO.to(this.room.id).emit(GameAbandonEvent)
-
         this.room.playerA = null
         this.room.playerB = null
         this.room.allPlayers = []
         this.room.game = new PaiShoGame(this.room)
+        this.room.lobby.canJoin = true
+
+        serverIO.to(this.room.id).emit(GameAbandonEvent)
     }
 
     announceWinner(winner: Player) {
         const loser = this.getOtherPlayer(winner)
 
+        this.room.lobby.canJoin = true
         winner.socket.emit(GameEndEvent, { win: true } as GameEndPacket)
         loser.socket.emit(GameEndEvent, { win: false } as GameEndPacket)
     }

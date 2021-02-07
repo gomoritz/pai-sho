@@ -13,7 +13,8 @@ app.use("/room", express.static("src/client/room", { index: "room.html" }))
 app.use("/resources", express.static("resources"))
 app.use("/shared", express.static("src/shared"))
 
-app.get("/create_room", (req, res) => res.redirect(`/room?id=${RoomManager.createRoom(generateUUID()).id}`))
+app.get("/create_room", (req, res) => res.redirect(`/room?id=${RoomManager.createPrivateRoom(generateUUID()).id}`))
+app.get("/queue", (req, res) => res.redirect(`/room?id=${RoomManager.queue().id}`))
 app.get("/", (req, res) => res.redirect("/play"))
 
 attachSocketServer(http)

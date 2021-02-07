@@ -6,7 +6,7 @@ import { JoinRoomPacket } from "../../shared/events/join-room.js";
 import { deserializeGameKey } from "../utils/tokenizer.js";
 
 export namespace RoomManager {
-    const rooms: GameRoom[] = [new GameRoom("test")]
+    const rooms: GameRoom[] = [new GameRoom("test", true)]
 
     export function joinRoom(socket: Socket, packet: JoinRoomPacket): boolean {
         const target = getRoomById(packet.roomId)
@@ -31,8 +31,8 @@ export namespace RoomManager {
         return rooms.find(it => it.id == id) ?? null
     }
 
-    export function createRoom(id: string) {
-        const room = new GameRoom(id);
+    export function createPrivateRoom(id: string) {
+        const room = new GameRoom(id, true);
         rooms.push(room)
         return room
     }
@@ -40,6 +40,15 @@ export namespace RoomManager {
     export function deleteRoom(room: GameRoom) {
         rooms.splice(rooms.indexOf(room), 1)
         console.log(`Deleted room ${room.id}`)
+    }
+
+    export function queue() {
+        let availableRoom = rooms.find(it => !it.isPrivate && it.lobby.canJoin && it.lobby.entities.length < 2)
+        if (!availableRoom) {
+            availableRoom = new GameRoom(generateUUID(), false)
+            rooms.push(availableRoom)
+        }
+        return availableRoom
     }
 }
 
