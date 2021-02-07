@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+
+    background-image: url("../../../resources/background/4.png");
+    background-size: cover;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content {
+    width: 70%;
+    height: 70%;
+    max-width: 1300px;
+    padding: 80px;
+    box-sizing: border-box;
+    box-shadow: 0 0 15px 2px rgba(0,0,0,.2);
+    background-color: rgba(255,255,255,.3);
+    backdrop-filter: blur(35px);
+    border-radius: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.title h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #6f2801;
+    text-shadow: 0 0 5px rgba(0,0,0,.3);
+}
+
+.title h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    color: #EEC484;
+    text-shadow: 0 0 5px rgba(0,0,0,.3);
+}
+
+.play {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.play-title {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.play-title h3 {
+    width: auto;
+    color: #FFFFFF;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(0,0,0,.4);
+    margin: 20px;
+}
+
+.line {
+    width: auto;
+    height: 2px;
+    flex: 1;
+    background-color: #FFFFFF;
+    opacity: .5;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttons a {
+    color: #FFFFFF;
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0,0,0,.4);
+}
+
+.sub-buttons {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sub-buttons h3 {
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.sub-buttons p {
+    color: #FFFFFF;
+    text-shadow: 1px 1px 2px rgba(0,0,0,.2);
+    text-align: center;
+}
+
+.private h3 {
+    color: #e67e22;
+    text-shadow: 1px 1px 0 #955016;
+}
+
+.queue h3 {
+    color: #3498db;
+    text-shadow: 1px 1px 0 #22608D;
+}
+
+.sub-buttons button {
+    margin-top: 20px;
+    width: 50%;
+
+    padding: 5px 25px;
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    text-align: center;
+
+    border: 2px solid;
+    border-radius: 5px;
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.private button {
+    background: #E67E22;
+    border-color: #B7611A;
+}
+.private button:hover {
+    background: #F58A25;
+}
+
+.queue button {
+    background: #3498db;
+    border-color: #2A79AF;
+}
+.queue button:hover {
+    background: #38A7F1;
+}
+
+.sub-buttons button:focus {
+    outline: none;
+}
