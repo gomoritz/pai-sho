@@ -17,7 +17,7 @@ function zoom(value: number) {
     zoomAnimation = new Animation(
         zoomAnimation?.stop() ?? zoomLevel,
         targetLevel,
-        Math.abs(targetLevel - zoomLevel) / 50,
+        Math.abs(targetLevel - zoomLevel) / 30,
         1
     ).withCallback((value) => {
         zoomLevel = value
@@ -62,7 +62,7 @@ export function shift(x: number, y: number) {
 }
 
 export function createCameraListeners() {
-    canvas.addEventListener("mousewheel", updateZoom)
+    canvas.addEventListener("wheel", updateZoom)
 
     canvas.addEventListener("mousedown", onMouseDown)
     window.addEventListener("mouseup", onMouseUp)
