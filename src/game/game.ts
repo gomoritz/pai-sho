@@ -3,6 +3,9 @@ import { initLogic } from "./logic-core.js";
 import { connectToServer } from "./client-core.js";
 import { updateScale } from "../shared/utils/dimensions.js";
 import { shift, zoomLevel } from "./logic/camera.js";
+import { verifyBrowser } from "./utils/browser-verifier.js";
+
+verifyBrowser()
 
 export const canvas = document.getElementById("main-canvas") as HTMLCanvasElement
 export const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!!
