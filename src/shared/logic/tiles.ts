@@ -1,7 +1,7 @@
 import Point, { subtract } from "../utils/point.js";
 import Field from "./field.js";
 import GameBoard from "./game-board.js";
-import TileRenderer from "../../game/objects/tile-renderer.js";
+import TileRenderer from "../../client/game/objects/tile-renderer.js";
 import { myTiles, opponentTiles } from "./lineup.js";
 import { tileSize } from "../utils/dimensions.js";
 import { calculateAllPossibleMoves } from "./tile-moves.js";

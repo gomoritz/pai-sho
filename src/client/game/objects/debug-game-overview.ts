@@ -1,8 +1,8 @@
 import RenderObject from "./render-object.js";
 import { ctx, isDebug } from "../game.js";
-import { GameStartPacket } from "../../shared/events/game-start.js";
+import { GameStartPacket } from "../../../shared/events/game-start.js";
 import { movingTile } from "../logic/tile-interaction.js";
-import { add } from "../../shared/utils/point.js";
+import { add } from "../../../shared/utils/point.js";
 import { gameBoardRenderer } from "../render-core.js";
 
 export default class DebugGameOverview extends RenderObject {

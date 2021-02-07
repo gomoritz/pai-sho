@@ -3,15 +3,15 @@
  * the game board.
  */
 
-import { Tile } from "../../shared/logic/tiles.js";
+import { Tile } from "../../../shared/logic/tiles.js";
 import { canvas, ctx, draw, isDebug } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
-import Point, { add, distanceBetween } from "../../shared/utils/point.js";
+import Point, { add, distanceBetween } from "../../../shared/utils/point.js";
 import { gameBoard } from "../logic-core.js";
-import { myTiles } from "../../shared/logic/lineup.js";
-import { canMoveTileToField } from "../../shared/logic/tile-moves.js";
+import { myTiles } from "../../../shared/logic/lineup.js";
+import { canMoveTileToField } from "../../../shared/logic/tile-moves.js";
 import { cancelEvent } from "../utils/events.js";
-import Field from "../../shared/logic/field.js";
+import Field from "../../../shared/logic/field.js";
 import { emitMoveTile } from "../client-core.js";
 import { isMyTurn, verify } from "./whose-turn-is-it.js";
 

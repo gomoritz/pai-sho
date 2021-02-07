@@ -1,12 +1,12 @@
 import DebugGameOverview from "../objects/debug-game-overview.js";
 import { draw } from "../game.js";
-import Field from "../../shared/logic/field.js";
+import Field from "../../../shared/logic/field.js";
 import { gameBoard } from "../logic-core.js";
 import { emitPassChainJump } from "../client-core.js";
-import { Tile } from "../../shared/logic/tiles.js";
-import { GameStartPacket } from "../../shared/events/game-start.js";
-import { WhoseTurnPacket } from "../../shared/events/whose-turn.js";
-import { InCheckPacket } from "../../shared/events/in-check.js";
+import { Tile } from "../../../shared/logic/tiles.js";
+import { GameStartPacket } from "../../../shared/events/game-start.js";
+import { WhoseTurnPacket } from "../../../shared/events/whose-turn.js";
+import { InCheckPacket } from "../../../shared/events/in-check.js";
 import { showActionBar, showWhoseTurn } from "../utils/user-interface.js";
 
 const passButton = document.getElementById("pass-chain-jump") as HTMLButtonElement

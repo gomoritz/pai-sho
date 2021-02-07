@@ -1,4 +1,4 @@
-import { GameStartPacket } from "../../shared/events/game-start.js";
+import { GameStartPacket } from "../../../shared/events/game-start.js";
 
 const element = document.getElementById("overlay")!!;
 const textElement = document.getElementById("overlay-text")!!

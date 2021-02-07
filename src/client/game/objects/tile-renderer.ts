@@ -1,9 +1,9 @@
 import RenderObject from "./render-object.js";
-import { LotusTile, Tile } from "../../shared/logic/tiles.js";
-import { add } from "../../shared/utils/point.js";
+import { LotusTile, Tile } from "../../../shared/logic/tiles.js";
+import { add } from "../../../shared/utils/point.js";
 import { gameBoardRenderer } from "../render-core.js";
 import { ctx } from "../game.js";
-import { scale, selectedSize, tileShadowOffset, tileSize } from "../../shared/utils/dimensions.js";
+import { scale, selectedSize, tileShadowOffset, tileSize } from "../../../shared/utils/dimensions.js";
 import { isInCheck } from "../logic/whose-turn-is-it.js";
 
 export default class TileRenderer extends RenderObject {

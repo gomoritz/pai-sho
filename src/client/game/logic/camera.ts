@@ -1,6 +1,6 @@
 import { canvas, draw, setCanvasDimensions } from "../game.js";
 import { hoveredTile } from "./tile-interaction.js";
-import { gameBoardRadius, scale } from "../../shared/utils/dimensions.js";
+import { gameBoardRadius, scale } from "../../../shared/utils/dimensions.js";
 import Animation from "../utils/animation.js";
 
 let isShifting: boolean = false

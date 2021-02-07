@@ -1,23 +1,23 @@
-import { Tile } from "../shared/logic/tiles.js";
-import Field from "../shared/logic/field.js";
-import { doTileMove } from "../shared/logic/tile-moves.js";
+import { Tile } from "../../shared/logic/tiles.js";
+import Field from "../../shared/logic/field.js";
+import { doTileMove } from "../../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
 import { draw } from "./game.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
-import { myTiles, opponentTiles, respawnAvatar } from "../shared/logic/lineup.js";
+import { myTiles, opponentTiles, respawnAvatar } from "../../shared/logic/lineup.js";
 import { hideOverlay, setNames, showGameEnd } from "./utils/user-interface.js";
-import { GameStartEvent, GameStartPacket } from "../shared/events/game-start.js";
-import { GameAbandonEvent } from "../shared/events/game-abandon.js";
-import { GameEndEvent, GameEndPacket } from "../shared/events/game-end.js";
-import { WhoseTurnEvent, WhoseTurnPacket } from "../shared/events/whose-turn.js";
-import { ThrowTilesEvent, ThrowTilesPacket } from "../shared/events/throw-tiles.js";
-import { TileMoveEvent, TileMovePacket, TileMoveResponseEvent, TileMoveResponsePacket } from "../shared/events/tile-move.js";
-import { PassChainJumpEvent } from "../shared/events/pass-chain-jump.js";
-import { InCheckEvent, InCheckPacket } from "../shared/events/in-check.js";
-import { JoinRoomPacket, JoinRoomResponsePacket } from "../shared/events/join-room.js";
-import { RespawnAvatarEvent, RespawnAvatarPacket } from "../shared/events/respawn-avatar.js";
+import { GameStartEvent, GameStartPacket } from "../../shared/events/game-start.js";
+import { GameAbandonEvent } from "../../shared/events/game-abandon.js";
+import { GameEndEvent, GameEndPacket } from "../../shared/events/game-end.js";
+import { WhoseTurnEvent, WhoseTurnPacket } from "../../shared/events/whose-turn.js";
+import { ThrowTilesEvent, ThrowTilesPacket } from "../../shared/events/throw-tiles.js";
+import { TileMoveEvent, TileMovePacket, TileMoveResponseEvent, TileMoveResponsePacket } from "../../shared/events/tile-move.js";
+import { PassChainJumpEvent } from "../../shared/events/pass-chain-jump.js";
+import { InCheckEvent, InCheckPacket } from "../../shared/events/in-check.js";
+import { JoinRoomPacket, JoinRoomResponsePacket } from "../../shared/events/join-room.js";
+import { RespawnAvatarEvent, RespawnAvatarPacket } from "../../shared/events/respawn-avatar.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 

@@ -1,7 +1,7 @@
 import { renderCanvas } from "./render-core.js";
 import { initLogic } from "./logic-core.js";
 import { connectToServer } from "./client-core.js";
-import { updateScale } from "../shared/utils/dimensions.js";
+import { updateScale } from "../../shared/utils/dimensions.js";
 import { shift, zoomLevel } from "./logic/camera.js";
 import { verifyBrowser } from "./utils/browser-verifier.js";
 
