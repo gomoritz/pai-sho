@@ -1,19 +1,26 @@
 import { GameStartPacket } from "../../../shared/events/game-start.js";
+import { sendBackToLobby } from "../client-core.js";
 
-const element = document.getElementById("overlay")!!;
+const overlayElement = document.getElementById("overlay")!!;
 const textElement = document.getElementById("overlay-text")!!
+const timerElement = document.getElementById("overlay-timer")!!
 
 export function hideOverlay() {
-    element.style.opacity = "0"
+    overlayElement.style.opacity = "0"
     setTimeout(() => {
-        element.style.display = "none"
+        overlayElement.style.display = "none"
     }, 500)
 }
 
 export function showOverlay(text?: string) {
     if (text) textElement.innerText = text
-    element.style.display = "flex"
-    element.style.opacity = "1"
+    overlayElement.style.display = "flex"
+    overlayElement.style.opacity = "1"
+}
+
+export function showGameEndTimer() {
+    timerElement.style.display = "block"
+    setTimeout(() => sendBackToLobby(), 10_000)
 }
 
 export let myName: string
@@ -81,4 +88,5 @@ export function showGameEnd(win: boolean) {
     } else {
         showOverlay("Du hast verloren!")
     }
+    showGameEndTimer()
 }

@@ -38,7 +38,7 @@ export function connectToServer() {
     emitJoinGame()
 }
 
-function sendBackToLobby() {
+export function sendBackToLobby() {
     clientIO.disconnect()
     const url = new URL(location.href)
     url.search = ""
@@ -62,7 +62,7 @@ clientIO.on(JoinGameResponseEvent, (packet: JoinGameResponsePacket) => {
     if (!packet.success) {
         sendBackToLobby()
     } else {
-        console.log(`Successfully joined room with game key ${gameKey}`)
+        console.log(`Successfully joined game`)
     }
 })
 

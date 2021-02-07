@@ -82,6 +82,24 @@ body {
     font-weight: 600;
 }
 
+#overlay-timer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 8px;
+
+    background-color: #38A7F1;
+    animation: overlay-bar-fade-out 10s linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes overlay-bar-fade-out {
+    from { width: 100% }
+    to { width: 0 }
+}
+
 .name-tag {
     position: absolute;
     left: 50%;
