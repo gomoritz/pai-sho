@@ -32,7 +32,7 @@ export default class Lobby {
         this.publishLobbyEntities()
         console.log(`${entity.username} left lobby of room ${this.room.id}`)
 
-        if (this.entities.length == 0) {
+        if (this.entities.length == 0 && this.room.id != "test") {
             RoomManager.deleteRoom(this.room)
         }
     }
@@ -50,9 +50,10 @@ export default class Lobby {
     }
 
     renameEntity(entity: LobbyEntity, packet: ChangeNamePacket) {
-        if (!this.validateName(packet.newUsername)) return
-        console.log(`Renamed ${entity.username} to ${packet.newUsername}`)
-        entity.username = packet.newUsername
+        if (this.validateName(packet.newUsername)) {
+            console.log(`Renamed ${entity.username} to ${packet.newUsername}`)
+            entity.username = packet.newUsername
+        }
         this.publishLobbyEntities()
     }
 
