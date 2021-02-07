@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+
+    background-image: url("../../../resources/background/4.png");
+    background-size: cover;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content {
+    width: 70%;
+    height: 70%;
+    max-width: 1300px;
+    padding: 80px;
+    box-sizing: border-box;
+    box-shadow: 0 0 15px 2px rgba(0,0,0,.2);
+    background-color: rgba(255,255,255,.3);
+    backdrop-filter: blur(35px);
+    border-radius: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.title h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #6f2801;
+    text-shadow: 0 0 5px rgba(0,0,0,.3);
+}
+
+.title h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    color: #fad390;
+    text-shadow: 0 0 5px rgba(0,0,0,.3);
+}
+
+.title p {
+    width: 60%;
+    color: #FFFFFF;
+    text-shadow: 1px 1px 2px rgba(0,0,0,.2);
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 20px;
+}
+
+.overview {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#start {
+    margin-top: 30px;
+    width: 50%;
+
+    padding: 5px 25px;
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    text-align: center;
+
+    border-radius: 5px;
+    cursor: pointer;
+
+    transition: .2s;
+    background: #E67E22;
+    border: 2px solid #B7611A;
+}
+
+#start:hover {
+    background: #F58A25;
+}
+
+#start:disabled {
+    cursor: no-drop;
+    background: #B7611A;
+}
+
+#entities {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.entity p, .entity input[type="text"] {
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    opacity: 1;
+    text-shadow: 1px 1px 2px rgba(0,0,0,.3);
+}
+
+.entity input[type="text"] {
+    outline: none;
+    border: none;
+    background: none;
+    width: 100%;
+}
+
+.entity {
+    width: 60%;
+    padding: 5px 10px;
+
+    background-color: rgba(0,0,0,.3);
+    border-radius: 5px;
+    margin-bottom: 8px;
+}
+
+#my-entity {
+    background-color: rgba(56, 167, 241, 0.8);
+}

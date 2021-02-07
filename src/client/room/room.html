@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>Pai Sho | Warteraum</title>
+      <link rel="stylesheet" href="room.css">
+   </head>
+   <body>
+      <div id="content">
+         <div class="title">
+            <h2>Pai Sho Online</h2>
+            <h1>Warteraum</h1>
+            <p>Du bist erfolgreich einem Raum beigetreten. Hier kannst du warten, bis alle Spieler diesem Raum beigetreten sind.
+            Starte das Spiel indem du auf "Start" klickst.</p>
+         </div>
+         <div class="overview">
+            <div id="entities">
+               <div style="display: none" id="my-entity" class="entity"><input type="text"/></div>
+               <div style="display: none" id="opponent-entity" class="entity"><p></p></div>
+            </div>
+            <button id="start">Start</button>
+         </div>
+      </div>
+
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="room.js" type="module"></script>
+   </body>
+</html>
