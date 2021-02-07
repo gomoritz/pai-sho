@@ -16,45 +16,53 @@ import { ThrowTilesEvent, ThrowTilesPacket } from "../../shared/events/throw-til
 import { TileMoveEvent, TileMovePacket, TileMoveResponseEvent, TileMoveResponsePacket } from "../../shared/events/tile-move.js";
 import { PassChainJumpEvent } from "../../shared/events/pass-chain-jump.js";
 import { InCheckEvent, InCheckPacket } from "../../shared/events/in-check.js";
-import { JoinRoomPacket, JoinRoomResponsePacket } from "../../shared/events/join-room.js";
+import { JoinGameEvent, JoinGameResponsePacket, JoinGameResponseEvent } from "../../shared/events/join-game.js";
 import { RespawnAvatarEvent, RespawnAvatarPacket } from "../../shared/events/respawn-avatar.js";
 
 export const clientIO: SocketIOClient.Socket = io()
 
-let roomId: string
-let username: string
+let gameKey: string
 
 export function connectToServer() {
     const url = new URL(window.location.href);
-    const _roomId = url.searchParams.get("roomId")
-    const _username = url.searchParams.get("username")
+    const _gameKey = url.searchParams.get("game_key")
 
-    if (_roomId == null || _username == null) {
-        clientIO.disconnect()
-        alert("Missing request parameters")
-        // TODO: send back to main page
+    if (_gameKey == null) {
+        sendBackToLobby()
         return
     }
 
     history.pushState({}, "Pai Sho | Game", "/game/")
 
-    roomId = _roomId
-    username = _username
-    emitJoinRoom(_roomId, _username)
+    gameKey = _gameKey
+    emitJoinGame()
 }
 
-function emitJoinRoom(roomId: string, username: string) {
-    const event: JoinRoomPacket = { roomId, username };
-    clientIO.emit("join-room", event)
-}
+function sendBackToLobby() {
+    clientIO.disconnect()
+    const url = new URL(location.href)
+    url.search = ""
 
-clientIO.on("<-join-room", (packet: JoinRoomResponsePacket) => {
-    if (packet.success) {
-
+    if (gameKey != null) {
+        const decoded = JSON.parse(atob(gameKey.split(".")[1]))
+        url.pathname = "/room"
+        url.searchParams.set("id", decoded.roomId)
     } else {
-        clientIO.disconnect()
-        alert("Failed to join room")
-        // TODO: send back to main page
+        url.pathname = "/play"
+    }
+
+    window.location.href = url.href
+}
+
+function emitJoinGame() {
+    clientIO.emit(JoinGameEvent, { gameKey })
+}
+
+clientIO.on(JoinGameResponseEvent, (packet: JoinGameResponsePacket) => {
+    if (!packet.success) {
+        sendBackToLobby()
+    } else {
+        console.log(`Successfully joined room with game key ${gameKey}`)
     }
 })
 
@@ -79,13 +87,9 @@ clientIO.on(GameEndEvent, (packet: GameEndPacket) => {
     showGameEnd(packet.win)
 })
 
-clientIO.on(GameAbandonEvent, () => {
-    window.location.search = `roomId=${roomId}&username=${username}`
-})
+clientIO.on(GameAbandonEvent, () => sendBackToLobby())
 
-clientIO.on("disconnect", () => {
-    window.location.search = `roomId=${roomId}&username=${username}`
-})
+clientIO.on("disconnect", () => sendBackToLobby())
 
 clientIO.on(WhoseTurnEvent, (packet: WhoseTurnPacket) => {
     setIsMyTurn(packet)
