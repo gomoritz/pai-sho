@@ -39,7 +39,7 @@ export namespace RoomManager {
 
     export function deleteRoom(room: GameRoom) {
         rooms.splice(rooms.indexOf(room), 1)
-        console.log(`Deleted room ${this.room.id}`)
+        console.log(`Deleted room ${room.id}`)
     }
 }
 
