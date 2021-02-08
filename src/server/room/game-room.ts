@@ -68,11 +68,10 @@ export default class GameRoom {
         const date = new Date()
         const h = date.getHours(), m = date.getMinutes(), s = date.getSeconds()
         const hh = h < 10 ? `0${h}` : `${h}`, mm = m < 10 ? `0${m}` : `${m}`, ss = s < 10 ? `0${s}` : `${s}`
-        const id = this.id.length > 6 ? this.id.substring(0, 6) : this.id
 
         console.log(
             colors.gray("[") + colors.cyan(`${hh}:${mm}:${ss}`) + colors.gray("] ") +
-            colors.gray("[") + colors.green(id) + colors.gray("]"),
+            colors.gray("[") + colors.green(this.id) + colors.gray("]"),
             ...messages
         )
     }
