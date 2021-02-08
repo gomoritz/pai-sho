@@ -82,9 +82,10 @@ export default class PaiShoGame {
         const field = this.gameBoard.getField(serverField.x, serverField.y)
         const tile = (isExecutorA ? myTiles : opponentTiles).find(it => it.id == event.tileId)
 
-        if (field == null || tile == null || !canMoveTileToField(tile, field) || !this.verifyChainJumps(tile, field)) {
-            return console.log("error invalid tile move");
-        }
+        if (field == null) return this.room.log("error: cannot find field on server-side");
+        if (tile == null) return this.room.log("error: cannot find tile on server-side")
+        if (!canMoveTileToField(tile, field)) return this.room.log(`error: cannot move ${tile} to ${field}`)
+        if (!this.verifyChainJumps(tile, field)) return this.room.log(`error: invalid chain jump ${tile} to ${field}`)
 
         const originalField = tile.field!!
         tile.field!!.tile = null
@@ -98,20 +99,20 @@ export default class PaiShoGame {
         response.field = { x: -serverField.x, y: -serverField.y }
         this.room.playerB!!.socket.emit(TileMoveResponseEvent, response)
 
-        console.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
+        this.room.log(`${player.username} moved ${event.tileId} to [${serverField.x},${serverField.y}]`)
 
         const isThrown = this.checkForThrows(tile)
         // must be called after checkForGameEnd()
         this.checkForInCheck()
         const gameEnds = this.checkForGameEnd()
-        if (gameEnds) return console.log("Game is ending")
+        if (gameEnds) return this.room.log("Game is ending")
 
         if (!isThrown) {
             this.chainJumps = this.canPerformChainJump(originalField, tile)
             this.tileWhichChainJumps = this.chainJumps != null ? tile : null
 
             if (this.chainJumps != null) {
-                console.log(`${player.username} can perform a chain jump`)
+                this.room.log(`${player.username} can perform a chain jump`)
                 this.setWhoseTurn(player)
                 return
             }
@@ -164,11 +165,11 @@ export default class PaiShoGame {
             totalThrows.forEach(action => {
                 // revert inversion
                 const performer = !action.thrower.isMyTile ? this.currentPlayer : otherPlayer;
-                console.log(`${performer!!.username} threw ${action.victim.tile} with ${action.thrower.tile}`)
+                this.room.log(`${performer!!.username} threw ${action.victim.tile} with ${action.thrower.tile}`)
 
                 if (action.victim.tile == "avatar") {
                     const other = this.getOtherPlayer(performer!!);
-                    console.log(`${other.username} has lost his avatar`)
+                    this.room.log(`${other.username} has lost his avatar`)
                     other.lostAvatar = true
                 }
             })
@@ -205,7 +206,7 @@ export default class PaiShoGame {
         } else return false
 
         this.announceWinner(winner)
-        console.log(`${winner.username} wins the game`)
+        this.room.log(`${winner.username} wins the game`)
         return true
     }
 
@@ -221,7 +222,7 @@ export default class PaiShoGame {
         if (this.currentPlayer == player && this.chainJumps != null) {
             this.chainJumps = null
             this.setWhoseTurn(this.getOtherPlayer(player))
-            console.log(`${player.username} passed his chain jump`)
+            this.room.log(`${player.username} finished his move`)
         }
     }
 

@@ -28,14 +28,14 @@ export default class Lobby {
         socket.on(StartRoomEvent, () => this.startRoom(entity))
         socket.on("disconnect", () => this.removeFromLobby(entity))
         this.publishLobbyEntities()
-        console.log(`${username} joined lobby of room ${this.room.id}`)
+        this.room.log(`${username} joined the lobby`)
         return true
     }
 
     removeFromLobby(entity: LobbyEntity) {
         this.entities.splice(this.entities.indexOf(entity), 1)
         this.publishLobbyEntities()
-        console.log(`${entity.username} left lobby of room ${this.room.id}`)
+        this.room.log(`${entity.username} left the lobby`)
 
         if (this.entities.length == 0 && this.room.id != "test" && this.canJoin) {
             RoomManager.deleteRoom(this.room)
@@ -56,7 +56,7 @@ export default class Lobby {
 
     renameEntity(entity: LobbyEntity, packet: ChangeNamePacket) {
         if (this.validateName(packet.newUsername)) {
-            console.log(`Renamed ${entity.username} to ${packet.newUsername}`)
+            this.room.log(`Renamed ${entity.username} to ${packet.newUsername}`)
             entity.username = packet.newUsername
         }
         this.publishLobbyEntities()
@@ -72,7 +72,7 @@ export default class Lobby {
             entity.socket.emit(RedirectToGameEvent, packet)
         })
 
-        console.log(`${entity.username} started the room ${this.room.id}`)
+        this.room.log(`${entity.username} started game`)
     }
 
     validateName(name: string): boolean {

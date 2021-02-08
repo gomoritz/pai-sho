@@ -2,7 +2,7 @@ import { Tile } from "../../shared/logic/tiles.js";
 import Field from "../../shared/logic/field.js";
 import { doTileMove } from "../../shared/logic/tile-moves.js";
 import { gameBoard } from "./logic-core.js";
-import { draw } from "./game.js";
+import { draw, isDebug } from "./game.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
@@ -116,4 +116,10 @@ clientIO.on(ThrowTilesEvent, (packet: ThrowTilesPacket) => {
 clientIO.on(RespawnAvatarEvent, (packet: RespawnAvatarPacket) => {
     respawnAvatar(gameBoard, packet)
     draw()
+})
+
+window.addEventListener("keypress", event => {
+    if (isDebug && event.key == "E") {
+        clientIO.emit("export")
+    }
 })

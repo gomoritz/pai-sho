@@ -38,8 +38,8 @@ export namespace RoomManager {
     }
 
     export function deleteRoom(room: GameRoom) {
+        room.log(`Deleted empty room`)
         rooms.splice(rooms.indexOf(room), 1)
-        console.log(`Deleted room ${room.id}`)
     }
 
     export function queue() {
