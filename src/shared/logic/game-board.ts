@@ -1,9 +1,11 @@
 import Field from "./field.js";
 import Point, { distanceBetween } from "../utils/point.js";
 import { gameBoardRadius, lineGap, tileSize } from "../utils/dimensions.js";
+import Lineup from "./lineup.js";
 
 export default class GameBoard {
     public fields: { [coordinate: string]: Field }
+    public lineup: Lineup = new Lineup(this)
 
     getRealCoordinatesRelativeToCenter(fieldX: number, fieldY: number): Point | null {
         const functionXForFieldX = (x: number) => -x + (lineGap * fieldX)

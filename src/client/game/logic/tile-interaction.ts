@@ -8,7 +8,6 @@ import { canvas, ctx, draw, isDebug } from "../game.js";
 import { gameBoardRenderer } from "../render-core.js";
 import Point, { add, distanceBetween } from "../../../shared/utils/point.js";
 import { gameBoard } from "../logic-core.js";
-import { myTiles } from "../../../shared/logic/lineup.js";
 import { canMoveTileToField } from "../../../shared/logic/tile-moves.js";
 import { cancelEvent } from "../utils/events.js";
 import Field from "../../../shared/logic/field.js";
@@ -47,7 +46,7 @@ function handleMove(event: MouseEvent) {
         draw()
     } else {
         const relativePoint = gameBoardRenderer.relativeToCenter(point)
-        const hovered = myTiles.find(tile => tile.isInsideTile(relativePoint))
+        const hovered = gameBoard.lineup.myTiles.find(tile => tile.isInsideTile(relativePoint))
 
         if (hovered === undefined || !isMyTurn()) {
             setCursor(event, "default")

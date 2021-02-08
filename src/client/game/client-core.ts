@@ -6,7 +6,6 @@ import { draw, isDebug } from "./game.js";
 import { renderObjects } from "./render-core.js";
 import DebugGameOverview from "./objects/debug-game-overview.js";
 import { setInCheck, setIsMyTurn } from "./logic/whose-turn-is-it.js";
-import { myTiles, opponentTiles, respawnAvatar } from "../../shared/logic/lineup.js";
 import { hideOverlay, setNames, showGameEnd } from "./utils/user-interface.js";
 import { GameStartEvent, GameStartPacket } from "../../shared/events/game-start.js";
 import { GameAbandonEvent } from "../../shared/events/game-abandon.js";
@@ -106,7 +105,8 @@ export function emitPassChainJump() {
 clientIO.on(ThrowTilesEvent, (packet: ThrowTilesPacket) => {
     packet.actions.forEach(action => {
         const isMyVictim = !action.thrower.isMyTile
-        const victimTile = (isMyVictim ? myTiles : opponentTiles).find(it => it.id == action.victim.tile)!!
+        const victimTile = (isMyVictim ? gameBoard.lineup.myTiles : gameBoard.lineup.opponentTiles)
+            .find(it => it.id == action.victim.tile)!!
 
         victimTile.setThrown()
         console.log(`${isMyVictim ? "My" : "Opponent"} tile ${victimTile.id} was thrown by ${action.thrower.tile}`)
@@ -114,7 +114,7 @@ clientIO.on(ThrowTilesEvent, (packet: ThrowTilesPacket) => {
 })
 
 clientIO.on(RespawnAvatarEvent, (packet: RespawnAvatarPacket) => {
-    respawnAvatar(gameBoard, packet)
+    gameBoard.lineup.respawnAvatar(packet)
     draw()
 })
 

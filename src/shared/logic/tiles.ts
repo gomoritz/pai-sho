@@ -2,7 +2,6 @@ import Point, { subtract } from "../utils/point.js";
 import Field from "./field.js";
 import GameBoard from "./game-board.js";
 import TileRenderer from "../../client/game/objects/tile-renderer.js";
-import { myTiles, opponentTiles } from "./lineup.js";
 import { tileSize } from "../utils/dimensions.js";
 import { calculateAllPossibleMoves } from "./tile-moves.js";
 
@@ -26,9 +25,9 @@ export abstract class Tile {
         this.field = null
 
         if (this.isDark) {
-            opponentTiles.splice(opponentTiles.indexOf(this), 1)
+            this.gameBoard?.lineup.opponentTiles.splice(this.gameBoard?.lineup.opponentTiles.indexOf(this), 1)
         } else {
-            myTiles.splice(myTiles.indexOf(this), 1)
+            this.gameBoard?.lineup.myTiles.splice(this.gameBoard?.lineup.myTiles.indexOf(this), 1)
         }
     }
 
@@ -64,7 +63,7 @@ export abstract class Tile {
     }
 
     getTilesWhichCouldThrow(): Tile[] {
-        const candidates = this.isDark ? myTiles : opponentTiles
+        const candidates = this.isDark ? this.gameBoard!!.lineup.myTiles : this.gameBoard!!.lineup.opponentTiles
         const result: Tile[] = []
 
         for (let tile of candidates) {

@@ -1,7 +1,6 @@
 import GameRoom from "../room/game-room.js";
 import Player from "../objects/player.js";
 import GameBoard from "../../shared/logic/game-board.js";
-import { buildLineup, myTiles, opponentTiles, respawnAvatar } from "../../shared/logic/lineup.js";
 import { canMoveTileToField, canPerformJump } from "../../shared/logic/tile-moves.js";
 import { LotusTile, Tile } from "../../shared/logic/tiles.js";
 import Field from "../../shared/logic/field.js";
@@ -24,7 +23,7 @@ export default class PaiShoGame {
 
     constructor(private room: GameRoom) {
         this.gameBoard.loadFields()
-        buildLineup(this.gameBoard)
+        this.gameBoard.lineup.buildLineup()
     }
 
     start() {
@@ -80,7 +79,8 @@ export default class PaiShoGame {
 
         // server-side game board is synced with player A
         const field = this.gameBoard.getField(serverField.x, serverField.y)
-        const tile = (isExecutorA ? myTiles : opponentTiles).find(it => it.id == event.tileId)
+        const tile = (isExecutorA ? this.gameBoard.lineup.myTiles : this.gameBoard.lineup.opponentTiles)
+            .find(it => it.id == event.tileId)
 
         if (field == null) return this.room.log("error: cannot find field on server-side");
         if (tile == null) return this.room.log("error: cannot find tile on server-side")
@@ -179,8 +179,8 @@ export default class PaiShoGame {
     }
 
     checkForInCheck() {
-        const lotusA = myTiles.find(it => it.id == "lotus") as LotusTile
-        const lotusB = opponentTiles.find(it => it.id == "lotus") as LotusTile
+        const lotusA = this.gameBoard.lineup.myTiles.find(it => it.id == "lotus") as LotusTile
+        const lotusB = this.gameBoard.lineup.opponentTiles.find(it => it.id == "lotus") as LotusTile
 
         for (let player of this.room.allPlayers) {
             const prev = player.inCheck
@@ -194,8 +194,8 @@ export default class PaiShoGame {
     }
 
     checkForGameEnd(): boolean {
-        const lotusA = myTiles.find(it => it.id == "lotus") as LotusTile
-        const lotusB = opponentTiles.find(it => it.id == "lotus") as LotusTile
+        const lotusA = this.gameBoard.lineup.myTiles.find(it => it.id == "lotus") as LotusTile
+        const lotusB = this.gameBoard.lineup.opponentTiles.find(it => it.id == "lotus") as LotusTile
 
         let winner: Player
 
@@ -243,8 +243,8 @@ export default class PaiShoGame {
             const avatarField = this.gameBoard.getField(4 * n, 4 * n)!!
 
             if (avatarField.tile == null) {
-                console.log(`Respawned ${nextPlayer.username}'s avatar`)
-                respawnAvatar(this.gameBoard, { myAvatar: this.room.playerA == nextPlayer })
+                this.room.log(`Respawned ${nextPlayer.username}'s avatar`)
+                this.gameBoard.lineup.respawnAvatar({ myAvatar: this.room.playerA == nextPlayer })
                 nextPlayer.lostAvatar = false
 
                 this.room.allPlayers.forEach(player => {
