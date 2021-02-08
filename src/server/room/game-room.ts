@@ -32,6 +32,7 @@ export default class GameRoom {
         player.socket.on("disconnect", () => this.removePlayerFromGame(player))
         player.socket.on(TileMoveEvent, (packet: TileMovePacket) => this.game.handleTileMove(player, packet))
         player.socket.on(PassChainJumpEvent, () => this.game.handlePassChainJump(player))
+        player.socket.on("export", () => this.exportBoard())
 
         this.log(`${player.username} joined the game`)
 
