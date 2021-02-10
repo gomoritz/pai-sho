@@ -18,17 +18,17 @@ export abstract class Tile {
     }
 
     setThrown() {
+        if (this.isDark) {
+            this.gameBoard!!.lineup.opponentTiles.splice(this.gameBoard!!.lineup.opponentTiles.indexOf(this), 1)
+        } else {
+            this.gameBoard!!.lineup.myTiles.splice(this.gameBoard!!.lineup.myTiles.indexOf(this), 1)
+        }
+
         this.isThrown = true
         this.isHovered = false
         this.isClicked = false
         this.field!!.tile = null
         this.field = null
-
-        if (this.isDark) {
-            this.gameBoard?.lineup.opponentTiles.splice(this.gameBoard?.lineup.opponentTiles.indexOf(this), 1)
-        } else {
-            this.gameBoard?.lineup.myTiles.splice(this.gameBoard?.lineup.myTiles.indexOf(this), 1)
-        }
     }
 
     startHover() {
@@ -40,7 +40,8 @@ export abstract class Tile {
     }
 
     isInsideTile(point: Point) {
-        const myPosition = this.field?.translateToPoint()!!
+        const myPosition = this.field?.translateToPoint()
+        if (!myPosition) return
         const relativePoint = subtract(point, myPosition)
 
         const diagonal = Math.sqrt(Math.pow(relativePoint.x, 2) + Math.pow(relativePoint.y, 2))
