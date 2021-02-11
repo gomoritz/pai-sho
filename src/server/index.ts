@@ -7,6 +7,11 @@ const app = express()
 const http = createServer(app)
 const port = 1616
 
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store')
+    next()
+})
+
 app.use("/game", express.static("src/client/game", { index: "game.html" }))
 app.use("/play", express.static("src/client/play", { index: "play.html" }))
 app.use("/room", express.static("src/client/room", { index: "room.html" }))
