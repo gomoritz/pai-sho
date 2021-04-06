@@ -5,7 +5,7 @@ import { generateUUID, RoomManager } from "./room/room-manager.js";
 
 const app = express()
 const http = createServer(app)
-const port = 1616
+const port = 1616 // this port is cool
 
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store')
